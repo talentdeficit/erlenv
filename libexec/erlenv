@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+if [ -z "${ERLENV_ROOT}" ]; then
+  ERLENV_ROOT="${HOME}/.erlenv"
+else
+  ERLENV_ROOT="${ERLENV_ROOT%/}"
+fi
+export ERLENV_ROOT
+
+if [ -z "${ERLENV_DIR}" ]; then
+  ERLENV_DIR="$(pwd)"
+else
+  cd "$ERLENV_DIR" 2>/dev/null || {
+    echo "erlenv: cannot change working directory to \`$ERLENV_DIR'"
+    exit 1
+  } >&2
+  ERLENV_DIR="$(pwd)"
+  cd "$OLDPWD"
+fi
+export ERLENV_DIR
+
+
+shopt -s nullglob
+
+bin_path="$(abs_dirname "$0")"
+for plugin_bin in "${ERLENV_ROOT}/plugins/"*/bin; do
+  bin_path="${bin_path}:${plugin_bin}"
+done
+export PATH="${bin_path}:${PATH}"
+
+hook_path="${ERLENV_HOOK_PATH}:${ERLENV_ROOT}/erlenv.d:/usr/local/etc/erlenv.d:/etc/erlenv.d:/usr/lib/erlenv/hooks"
+for plugin_hook in "${ERLENV_ROOT}/plugins/"*/etc/erlenv.d; do
+  hook_path="${hook_path}:${plugin_hook}"
+done
+export ERLENV_HOOK_PATH="$hook_path"
+
+shopt -u nullglob
+
+
+command="$1"
+case "$command" in
+"" | "-h" | "--help" )
+  echo -e "erlenv 0.1.0\n$(erlenv-help)" >&2
+  ;;
+* )
+  command_path="$(command -v "erlenv-$command" || true)"
+  if [ -z "$command_path" ]; then
+    echo "erlenv: no such command \`$command'" >&2
+    exit 1
+  fi
+
+  shift 1
+  exec "$command_path" "$@"
+  ;;
+esac

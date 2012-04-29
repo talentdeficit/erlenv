@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+print_set_version() {
+  echo "<release> should be a string matching a release known by erlenv"
+
+  local versions="$(erlenv-releases --bare)"
+  if [ -z "$versions" ]; then
+    echo "there are currently no releases installed for erlenv"
+  else
+    echo "the currently installed releases are:"
+    echo "$versions" | sed 's/^/  /'
+  fi
+
+  echo
+  echo "the special version string 'system' will use your default system erlang"
+}
+
+case "$1" in
+"") echo "usage: erlenv <command> [<args>]
+
+some useful erlenv commands are:
+   commands      list all erlenv commands
+   rehash        rehash erlenv shims (run this after installing binaries)
+   global        set or show the global release
+   local         set or show the local directory-specific release
+   shell         set or show the shell-specific release
+   release       show the current release
+   releases      list all releases known by erlenv
+   which         show the full path for the given command
+   whence        list all releases with the command
+
+see 'erlenv help <command>' for information on a specific command.
+for full documentation, see: https://github.com/releaseotron/erlenv#readme"
+;;
+commands) echo "usage: erlenv commands
+       erlenv commands --sh
+       erlenv commands --no-sh
+
+list all erlenv commands"
+;;
+global) echo "usage: rbenv global <release>
+
+sets the global release. you can override the global release at
+any time by setting a directory-specific release with \`erlenv local'
+or by setting the ERLENV_RELEASE environment variable
+
+$(print_set_version)"
+;;
+local) echo "usage: rbenv local <release>
+       rbenv local --unset
+
+sets the local directory-specific release by writing the release
+name to a file named '.erlenv-release'
+
+when you run an erlang command, erlenv will look for an '.erlenv-release'
+file in the current directory and each parent directory. if no such
+file is found in the tree, erlenv will use the global erlang release
+specified with \`erlenv global', or the release specified in the
+ERLENV_RELEASE environment variable
+
+$(print_set_version)"
+;;
+shell) echo "usage: erlenv shell <release>
+       erlenv shell --unset
+
+sets a shell-specific erlang release by setting the 'ERLENV_RELEASE'
+environment variable in your shell. this release overrides both
+project-specific releases and the global release
+
+$(print_set_version)"
+;;
+release) echo "usage: erlenv release
+
+lists the current active release"
+;;
+releases) echo "usage: erlenv releases
+       erlenv releases --bare
+
+lists all releases known by erlenv"
+;;
+which) echo "usage: erlenv which <command>
+
+displays the full path to the binary that erlenv will execute when you
+run the given command"
+;;
+whence) echo "usage: erlenv whence <command>
+
+lists all releases with the given command installed."
+;;
+*)
+  command_path="$(command -v "erlenv-$1" || true)"
+  if [ -n "$command_path" ]; then
+    echo "sorry, the \`$1' command isn't documented yet"
+    echo
+    echo "you can view the command's source here:"
+    echo "$command_path"
+    echo
+  else
+    echo "erlenv: no such command \`$1'"
+  fi
+esac

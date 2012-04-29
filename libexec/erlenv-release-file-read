@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+RELEASE_FILE="$1"
+
+if [ -e "$RELEASE_FILE" ]; then
+  # Read and print the first non-whitespace word from the specified
+  # version file.
+  release=""
+  while read -a words; do
+    word="${words[0]}"
+    if [ -z "$release" ] && [ -n "$word" ]; then
+      release="$word"
+    fi
+  done < <( cat "$RELEASE_FILE" && echo )
+
+  if [ -n "$release" ]; then
+    echo "$release"
+    exit
+  fi
+fi
+
+exit 1

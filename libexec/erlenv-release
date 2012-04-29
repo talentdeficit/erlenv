@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+echo "$(erlenv-release-name) (set by $(erlenv-release-origin))"

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+ERLENV_RELEASE_FILE="$1"
+ERLENV_RELEASE="$2"
+
+if [ -z "$ERLENV_RELEASE" ] || [ -z "$ERLENV_RELEASE_FILE" ]; then
+  echo "usage: erlenv write-release-file FILENAME RELEASE" >&2
+  exit 1
+fi
+
+# Make sure the specified version is installed.
+erlenv-prefix "$ERLENV_RELEASE" >/dev/null
+
+# Write the version out to disk.
+echo "$ERLENV_VERSION" > "$ERLENV_RELEASE_FILE"

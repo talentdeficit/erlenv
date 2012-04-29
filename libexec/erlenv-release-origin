@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+if [ -n "$ERLENV_RELEASE" ]; then
+  echo "ERLENV_RELEASE environment variable"
+else
+  erlenv-release-file
+fi

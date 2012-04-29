@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+root="$ERLENV_DIR"
+while [ -n "$root" ]; do
+  if [ -e "${root}/.erlang-release" ]; then
+    echo "${root}/.erlang-release"
+    exit
+  fi
+  root="${root%/*}"
+done
+
+global_release_file="${ERLENV_ROOT}/release"
+
+if [ -e "$global_release_file" ]; then
+  echo "$global_release_file"
+elif [ -e "${ERLENV_ROOT}/global" ]; then
+  echo "${ERLENV_ROOT}/global"
+elif [ -e "${ERLENV_ROOT}/default" ]; then
+  echo "${ERLENV_ROOT}/default"
+else
+  echo "$global_release_file"
+fi

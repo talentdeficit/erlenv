@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+if [ -z "$ERLENV_RELEASE" ]; then
+  ERLENV_RELEASE_FILE="$(erlenv-release-file)"
+  ERLENV_RELEASE="$(erlenv-release-file-read "$ERLENV_RELEASE_FILE" || true)"
+fi
+
+if [ -z "$ERLENV_RELEASE" ] || [ "$ERLENV_RELEASE" = "system" ]; then
+  echo "system"
+  exit
+fi
+
+ERLENV_RELEASE_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}"
+
+if [ -d "$ERLENV_RELEASE_PATH" ]; then
+  echo "$ERLENV_RELEASE"
+else
+  echo "erlenv: release \`$ERLENV_RELEASE' is not installed" >&2
+  exit 1
+fi
