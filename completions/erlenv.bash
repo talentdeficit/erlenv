@@ -1,14 +1,14 @@
-_rbenv() {
+_erlenv() {
   COMPREPLY=()
   local word="${COMP_WORDS[COMP_CWORD]}"
 
   if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "$(rbenv commands)" -- "$word") )
+    COMPREPLY=( $(compgen -W "$(erlenv commands)" -- "$word") )
   else
     local command="${COMP_WORDS[1]}"
-    local completions="$(rbenv completions "$command")"
+    local completions="$(erlenv completions "$command")"
     COMPREPLY=( $(compgen -W "$completions" -- "$word") )
   fi
 }
 
-complete -F _rbenv rbenv
+complete -F _erlenv erlenv
