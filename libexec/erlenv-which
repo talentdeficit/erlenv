@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  exec erlenv shims --short
+fi
+
+expand_path() {
+  if [ ! -d "$1" ]; then
+    return 1
+  fi
+
+  local cwd="$(pwd)"
+  cd "$1"
+  pwd
+  cd "$cwd"
+}
+
+remove_from_path() {
+  local path_to_remove="$(expand_path "$1")"
+  local result=""
+
+  if [ -z "$path_to_remove" ]; then
+    echo "${PATH}"
+    return
+  fi
+
+  local paths
+  IFS=: paths=($PATH)
+
+  for path in "${paths[@]}"; do
+    path="$(expand_path "$path" || true)"
+    if [ -n "$path" ] && [ "$path" != "$path_to_remove" ]; then
+      result="${result}${path}:"
+    fi
+  done
+
+  echo "${result%:}"
+}
+
+ERLENV_RELEASE="$(erlenv-release-name)"
+ERLENV_COMMAND="$1"
+
+if [ -z "$ERLENV_COMMAND" ]; then
+  echo "usage: erlenv which COMMAND" >&2
+  exit 1
+fi
+
+if [ "$ERLENV_RELEASE" = "system" ]; then
+  PATH="$(remove_from_path "${ERLENV_ROOT}/shims")"
+  ERLENV_COMMAND_PATH="$(command -v "$ERLENV_COMMAND")"
+else
+  ERLENV_COMMAND_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}/bin/${ERLENV_COMMAND}"
+fi
+
+for script in $(erlenv-hooks which); do
+  source "$script"
+done
+
+if [ -x "$ERLENV_COMMAND_PATH" ]; then
+  echo "$ERLENV_COMMAND_PATH"
+else
+  echo "erlenv: $ERLENV_COMMAND: command not found" >&2
+
+  releases="$(erlenv-whence "$ERLENV_COMMAND" || true)"
+  if [ -n "$releases" ]; then
+    { echo
+      echo "the \`$1' command exists in these releases:"
+      echo "$releases" | sed 's/^/  /g'
+      echo
+    } >&2
+  fi
+
+  exit 127
+fi

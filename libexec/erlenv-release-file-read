@@ -5,8 +5,8 @@ set -e
 RELEASE_FILE="$1"
 
 if [ -e "$RELEASE_FILE" ]; then
-  # Read and print the first non-whitespace word from the specified
-  # version file.
+  # read and print the first non-whitespace word from the specified
+  # release file
   release=""
   while read -a words; do
     word="${words[0]}"

@@ -2,12 +2,12 @@
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-ERLENV_VERSION_NAME="$(erlenv-release-name)"
+ERLENV_RELEASE_NAME="$(erlenv-release-name)"
 
 if [ "$1" = "--bare" ]; then
   hit_prefix=""
   miss_prefix=""
-  print_release="$ERLENV_VERSION_NAME"
+  print_release="$ERLENV_RELEASE_NAME"
 else
   hit_prefix="* "
   miss_prefix="  "
@@ -18,7 +18,7 @@ for path in "${ERLENV_ROOT}/releases/"*; do
   if [ -d "$path" ]; then
     release="${path##*/}"
 
-    if [ "$release" == "$ERLENV_VERSION_NAME" ]; then
+    if [ "$release" == "$ERLENV_RELEASE_NAME" ]; then
       echo "${hit_prefix}${print_release}"
     else
       echo "${miss_prefix}${release}"

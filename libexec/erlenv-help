@@ -2,19 +2,19 @@
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-print_set_version() {
+print_set_release() {
   echo "<release> should be a string matching a release known by erlenv"
 
-  local versions="$(erlenv-releases --bare)"
-  if [ -z "$versions" ]; then
+  local releases="$(erlenv-releases --bare)"
+  if [ -z "$releases" ]; then
     echo "there are currently no releases installed for erlenv"
   else
     echo "the currently installed releases are:"
-    echo "$versions" | sed 's/^/  /'
+    echo "$releases" | sed 's/^/  /'
   fi
 
   echo
-  echo "the special version string 'system' will use your default system erlang"
+  echo "the special release string 'system' will use your default system erlang"
 }
 
 case "$1" in
@@ -46,7 +46,7 @@ sets the global release. you can override the global release at
 any time by setting a directory-specific release with \`erlenv local'
 or by setting the ERLENV_RELEASE environment variable
 
-$(print_set_version)"
+$(print_set_release)"
 ;;
 local) echo "usage: rbenv local <release>
        rbenv local --unset
@@ -60,7 +60,7 @@ file is found in the tree, erlenv will use the global erlang release
 specified with \`erlenv global', or the release specified in the
 ERLENV_RELEASE environment variable
 
-$(print_set_version)"
+$(print_set_release)"
 ;;
 shell) echo "usage: erlenv shell <release>
        erlenv shell --unset
@@ -69,7 +69,7 @@ sets a shell-specific erlang release by setting the 'ERLENV_RELEASE'
 environment variable in your shell. this release overrides both
 project-specific releases and the global release
 
-$(print_set_version)"
+$(print_set_release)"
 ;;
 release) echo "usage: erlenv release
 

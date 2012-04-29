@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  echo --unset
+  echo system
+  exec erlenv-releases --bare
+fi
+
+release="$1"
+
+if [ -z "$release" ]; then
+  if [ -z "$ERLENV_RELEASE" ]; then
+    echo "erlenv: no shell-specific release configured" >&2
+    exit 1
+  else
+    echo "echo \"\$ERLENV_RELEASE\""
+    exit
+  fi
+fi
+
+if [ "$release" = "--unset" ]; then
+  echo "unset ERLENV_RELEASE"
+  exit 1
+fi
+
+# make sure the specified release is installed.
+erlenv-prefix "$erlenv" >/dev/null
+
+echo "export ERLENV_RELEASE=\"${release}\""

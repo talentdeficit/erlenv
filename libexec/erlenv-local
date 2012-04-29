@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  echo --unset
+  echo system
+  exec erlenv-releases --bare
+fi
+
+ERLENV_RELEASE="$1"
+ERLENV_RELEASE_FILE=".erlenv-release"
+
+if [ "$ERLENV_RELEASE" = "--unset" ]; then
+  rm -f "$ERLENV_RELEASE_FILE"
+elif [ -n "$ERLENV_RELEASE" ]; then
+  erlenv-release-file-write "$ERLENV_RELEASE_FILE" "$ERLENV_RELEASE"
+else
+  erlenv-release-file-read "$ERLENV_RELEASE_FILE" ||
+  { echo "erlenv: no local release configured for this directory"
+    exit 1
+  } >&2
+fi

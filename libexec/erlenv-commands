@@ -2,7 +2,7 @@
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-# Provide erlenv completions
+# provide erlenv completions
 if [ "$1" = "--complete" ]; then
   echo --sh
   echo --no-sh

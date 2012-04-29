@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  echo --path
+  exec erlenv shims --short
+fi
+
+if [ "$1" = "--path" ]; then
+  print_paths="1"
+  shift
+else
+  print_paths=""
+fi
+
+whence() {
+  local command="$1"
+  erlenv-releases --bare | while read release; do
+    path="$(erlenv-prefix "$release")/bin/${command}"
+    if [ -x "$path" ]; then
+      [ "$print_paths" ] && echo "$path" || echo "$release"
+    fi
+  done
+}
+
+ERLENV_COMMAND="$1"
+if [ -z "$ERLENV_COMMAND" ]; then
+  echo "usage: erlenv whence [--path] COMMAND" >&2
+  exit 1
+fi
+
+result="$(whence "$ERLENV_COMMAND")"
+[ -n "$result" ] && echo "$result"

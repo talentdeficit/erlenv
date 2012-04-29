@@ -10,8 +10,8 @@ if [ -z "$ERLENV_RELEASE" ] || [ -z "$ERLENV_RELEASE_FILE" ]; then
   exit 1
 fi
 
-# Make sure the specified version is installed.
+# make sure the specified release is installed
 erlenv-prefix "$ERLENV_RELEASE" >/dev/null
 
-# Write the version out to disk.
-echo "$ERLENV_VERSION" > "$ERLENV_RELEASE_FILE"
+# write the release out to disk
+echo "$ERLENV_RELEASE" > "$ERLENV_RELEASE_FILE"
