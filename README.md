@@ -41,34 +41,52 @@ because of this shim approach, all you need to use erlenv is `~/.erlenv/shims` i
 
 check out erlenv into `~/.erlenv`:
 
-    $ cd
-    $ git clone git://github.com/talentdeficit/erlenv.git .erlenv
+```bash
+$ cd
+$ git clone git://github.com/talentdeficit/erlenv.git .erlenv
+```
 
 add `~/.erlenv/bin` to your `$PATH` for access to the `erlenv` command-line utility
 
-    $ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.bash_profile
-    **zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
+```bash
+$ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.bash_profile
+```
+
+**zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
 
 add erlenv init to your shell to enable shims and autocompletion
 
-    $ echo 'eval "$(erlenv init -)"' >> ~/.bash_profile
-    **Zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
+```bash
+$ echo 'eval "$(erlenv init -)"' >> ~/.bash_profile
+```
+
+**zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
 
 restart your shell so the path changes take effect. you can now begin using erlenv
 
-    $ exec $SHELL
+```bash
+$ exec $SHELL
+```
 
 install releases into `~/.erlenv/releases`. for example, to install OTP R15B01, download and unpack the source, then run:
 
-    $ ./configure --prefix=$HOME/.erlenv/releases/r15b01
-    $ make
-    $ make install
+```bash
+$ ./configure --prefix=$HOME/.erlenv/releases/r15b01
+$ make
+$ make install
+```
 
 rebuild the shim binaries. you should do this any time you install a new release
 
-    $ erlenv rehash
+```bash
+$ erlenv rehash
+```
 
-start using erlenv
+start using `erlenv`
+
+```bash
+$ erlenv
+```
 
 
 ## <a name="usage">usage</a> ##
@@ -79,7 +97,9 @@ like `git`, the `erlenv` command delegates to subcommands based on its first arg
 
 sets the global release to be used in all shells by writing the version name to the `~/.erlenv/release` file. this version can be overridden by a per-project `.erlang-release` file, or by setting the `ERLENV_RELEASE` environment variable
 
-    $ erlenv global r15b01
+```bash
+$ erlenv global r15b01
+```
 
 the special version name `system` tells erlenv to use the system erlang (detected by searching your `$PATH`)
 
@@ -89,67 +109,86 @@ when run without a release name, `erlenv global` reports the currently configure
 
 sets a local per-project release by writing the version name to an `.erlang-release` file in the current directory. this version overrides the global, and can be overridden itself by setting the `ERLENV_RELEASE` environment variable or with the `erlenv shell` command.
 
-    $ erlenv local r15b01
+```bash
+$ erlenv local r15b01
+```
 
 when run without a release name, `erlenv local` reports the currently
 configured local release. you can also unset the local version:
 
-    $ erlenv local --unset
+```bash
+$ erlenv local --unset
+```
 
 ### <a name="shell">shell</a> ###
 
 sets a shell-specific release by setting the `ERLENV_RELEASE` environment variable in your shell. this release overrides both project-specific releases and the global release
 
-    $ erlenv shell riak-1.1.1
+```bash
+$ erlenv shell riak-1.1.1
+```
 
 when run without a release name, `erlenv shell` reports the current value of `ERLENV_RELEASE`. you can also unset the shell version:
 
-    $ erlenv shell --unset
+```bash
+$ erlenv shell --unset
+```
 
 note that you'll need erlenv's shell integration enabled (step 3 of the installation instructions) in order to use this command. if you prefer not to use shell integration, you may simply set the `ERLENV_RELEASE` variable yourself:
 
-    $ export ERLENV_RELEASE=riak-1.1.1
+```bash
+$ export ERLENV_RELEASE=riak-1.1.1
+```
 
 ### <a name="release">release</a> ###
 
 displays the currently active release, along with information on how it was set
 
-    $ erlenv release
-    riak-1.1.1 (set by /Users/alisdair/riak/.erlang-release)
+```bash
+$ erlenv release
+riak-1.1.1 (set by /Users/alisdair/riak/.erlang-release)
+```
 
 ### <a name="releases">releases</a> ###
 
 lists all releases known to erlenv, and shows an asterisk next to the currently active release
 
-    $ erlenv versions
-      r14b04
-      r14b04-minimal
-      r15b01
-    * r15b01-minimal (set by /Users/alisdair/.erlenv/global)
-      riak-1.1.1
+```bash
+$ erlenv versions
+  r14b04
+  r14b04-minimal
+  r15b01
+* r15b01-minimal (set by /Users/alisdair/.erlenv/global)
+  riak-1.1.1
+```
 
 ### <a name="rehash">rehash</a> ###
 
 installs shims for all release binaries known to erlenv (i.e., `~/.rbenv/releases/*/bin/*`). run this command after you install a new release
 
-    $ erlenv rehash
+```bash
+$ erlenv rehash
+```
 
 ### <a name="which">which</a> ###
 
 displays the full path to the binary that erlenv will execute when you run the given command
 
-    $ erlenv which erl
-    /Users/alisdair/.erlenv/releases/r15b01/bin/erl
+```bash
+$ erlenv which erl
+/Users/alisdair/.erlenv/releases/r15b01/bin/erl
+```
 
 ### <a name="whence">whenc</a> ###
 
 lists all releases with the given command installed
 
-    $ erlenv whence typer
-    r14b04
-    r15b01
-    riak-1.1.1
-
+```bash
+$ erlenv whence typer
+r14b04
+r15b01
+riak-1.1.1
+```
 
 ## <a name="thanks">acknowledgements</a> ##
 
