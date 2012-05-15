@@ -21,11 +21,11 @@ erlenv is released under the terms of the [mit license][mit]
   - [releases](#releases)
   - [rehash](#rehash)
   - [which](#which)
-  - [whence](#whenc)
-* [acknowledgments](#thanks)
+  - [whence](#whence)
+* [acknowledgments](#acknowledgments)
 
 
-## <a name="introduction">introduction</a> ##
+## introduction ##
 
 erlenv allows multiple erlang releases to coexist peacefully, and makes it easy to switch between them on a systemwide, per user or per directory basis
 
@@ -36,7 +36,7 @@ each release is it's own working tree with it's own binaries and applications. e
 because of this shim approach, all you need to use erlenv is `~/.erlenv/shims` in your `$PATH`
 
 
-## <a name="quickstart">quickstart</a> ##
+## quickstart ##
 
 
 check out erlenv into `~/.erlenv`:
@@ -89,11 +89,11 @@ $ erlenv
 ```
 
 
-## <a name="usage">usage</a> ##
+## usage ##
 
 like `git`, the `erlenv` command delegates to subcommands based on its first argument. the most common subcommands are:
 
-### <a name="global">global</a> ###
+### global ###
 
 sets the global release to be used in all shells by writing the version name to the `~/.erlenv/release` file. this version can be overridden by a per-project `.erlang-release` file, or by setting the `ERLENV_RELEASE` environment variable
 
@@ -105,7 +105,7 @@ the special version name `system` tells erlenv to use the system erlang (detecte
 
 when run without a release name, `erlenv global` reports the currently configured global version
 
-### <a name="local">local</a> ###
+### local ###
 
 sets a local per-project release by writing the version name to an `.erlang-release` file in the current directory. this version overrides the global, and can be overridden itself by setting the `ERLENV_RELEASE` environment variable or with the `erlenv shell` command.
 
@@ -120,7 +120,7 @@ configured local release. you can also unset the local version:
 $ erlenv local --unset
 ```
 
-### <a name="shell">shell</a> ###
+### shell ###
 
 sets a shell-specific release by setting the `ERLENV_RELEASE` environment variable in your shell. this release overrides both project-specific releases and the global release
 
@@ -140,7 +140,7 @@ note that you'll need erlenv's shell integration enabled (step 3 of the installa
 $ export ERLENV_RELEASE=riak-1.1.1
 ```
 
-### <a name="release">release</a> ###
+### release ###
 
 displays the currently active release, along with information on how it was set
 
@@ -149,7 +149,7 @@ $ erlenv release
 riak-1.1.1 (set by /Users/alisdair/riak/.erlang-release)
 ```
 
-### <a name="releases">releases</a> ###
+### releases ###
 
 lists all releases known to erlenv, and shows an asterisk next to the currently active release
 
@@ -162,7 +162,7 @@ $ erlenv versions
   riak-1.1.1
 ```
 
-### <a name="rehash">rehash</a> ###
+### rehash ###
 
 installs shims for all release binaries known to erlenv (i.e., `~/.rbenv/releases/*/bin/*`). run this command after you install a new release
 
@@ -170,7 +170,7 @@ installs shims for all release binaries known to erlenv (i.e., `~/.rbenv/release
 $ erlenv rehash
 ```
 
-### <a name="which">which</a> ###
+### which ###
 
 displays the full path to the binary that erlenv will execute when you run the given command
 
@@ -179,7 +179,7 @@ $ erlenv which erl
 /Users/alisdair/.erlenv/releases/r15b01/bin/erl
 ```
 
-### <a name="whence">whenc</a> ###
+### whence ###
 
 lists all releases with the given command installed
 
@@ -190,7 +190,7 @@ r15b01
 riak-1.1.1
 ```
 
-## <a name="thanks">acknowledgements</a> ##
+## acknowledgements ##
 
 erlenv is entirely the product of [sam stephenson][sstephenson] and all credit should go to him. i've just modified it slightly to make it nicer to work with erlang releases
 
