@@ -22,7 +22,7 @@ erlenv is released under the terms of the [mit license][mit]
   - [rehash](#rehash)
   - [which](#which)
   - [whence](#whence)
-* [acknowledgments](#acknowledgments)
+* [acknowledgements](#acknowledgements)
 
 
 ## introduction ##
