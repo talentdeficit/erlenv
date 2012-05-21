@@ -11,7 +11,7 @@ erlenv is released under the terms of the [mit license][mit]
 
 ## index ##
 
-* [introduction](#intro)
+* [introduction](#introduction)
 * [quickstart](#quickstart)
 * [usage](#usage)
   - [global](#global)
