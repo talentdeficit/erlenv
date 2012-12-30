@@ -5,10 +5,8 @@ _erlenv() {
   if [ "$COMP_CWORD" -eq 1 ]; then
     COMPREPLY=( $(compgen -W "$(erlenv commands)" -- "$word") )
   else
-    local words=("${COMP_WORDS[@]}")
-    unset words[0]
-    unset words[$COMP_CWORD]
-    local completions=$(erlenv completions "${words[@]}")
+    local command="${COMP_WORDS[1]}"
+    local completions="$(erlenv completions "$command")"
     COMPREPLY=( $(compgen -W "$completions" -- "$word") )
   fi
 }

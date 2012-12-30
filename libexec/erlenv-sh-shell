@@ -22,14 +22,11 @@ if [ -z "$release" ]; then
 fi
 
 if [ "$release" = "--unset" ]; then
-  echo "unset ERLENV_VERSION"
-  exit
-fi
-
-# Make sure the specified version is installed.
-if erlenv-prefix "$release" >/dev/null; then
-  echo "export ERLENV_RELEASE=\"${release}\""
-else
-  echo "return 1"
+  echo "unset ERLENV_RELEASE"
   exit 1
 fi
+
+# make sure the specified release is installed.
+erlenv-prefix "$erlenv" >/dev/null
+
+echo "export ERLENV_RELEASE=\"${release}\""
