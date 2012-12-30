@@ -32,7 +32,7 @@ some useful erlenv commands are:
    whence        list all releases with the command
 
 see 'erlenv help <command>' for information on a specific command.
-for full documentation, see: https://github.com/releaseotron/erlenv#readme"
+for full documentation, see: https://github.com/talentdeficit/erlenv#readme"
 ;;
 commands) echo "usage: erlenv commands
        erlenv commands --sh

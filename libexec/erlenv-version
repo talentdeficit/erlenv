@@ -8,4 +8,4 @@ cd "$ERLENV_ROOT"
 git_revision="$(git describe --tags HEAD 2>/dev/null || true)"
 git_revision="${git_revision#v}"
 
-echo "rbenv ${git_revision:-$version}"
+echo "erlenv ${git_revision:-$version}"
