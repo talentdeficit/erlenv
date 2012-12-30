@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+version=0.3.0
+
+cd "$ERLENV_ROOT"
+git_revision="$(git describe --tags HEAD 2>/dev/null || true)"
+git_revision="${git_revision#v}"
+
+echo "rbenv ${git_revision:-$version}"

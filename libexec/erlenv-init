@@ -82,11 +82,12 @@ if [ -z "$no_rehash" ]; then
   echo 'erlenv rehash 2>/dev/null'
 fi
 
-commands=(`erlenv commands --sh`)
+commands=(`erlenv-commands --sh`)
 IFS="|"
 cat <<EOS
 erlenv() {
-  local command="\$1"
+  typeset command
+  command="\$1"
   if [ "\$#" -gt 0 ]; then
     shift
   fi

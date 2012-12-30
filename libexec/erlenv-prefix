@@ -14,9 +14,10 @@ elif [ -z "$ERLENV_RELEASE" ]; then
   ERLENV_RELEASE="$(erlenv-release-name)"
 fi
 
-if [ "$ERLENV_RELEASE" = "system" ]; then
+if [ "$ERLENV_VERSION" = "system" ]; then
   ERL_PATH="$(erlenv-which erl)"
-  echo "${ERL_PATH%/*}"
+  ERL_PATH="${ERL_PATH%/*}"
+  echo "${ERL_PATH%/bin}"
   exit
 fi
 

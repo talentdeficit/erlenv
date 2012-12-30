@@ -2,26 +2,33 @@
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-ERLENV_RELEASE_NAME="$(erlenv-release-name)"
-
 if [ "$1" = "--bare" ]; then
   hit_prefix=""
   miss_prefix=""
-  print_release="$ERLENV_RELEASE_NAME"
+  current_release=""
+  include_system=""
 else
   hit_prefix="* "
   miss_prefix="  "
-  print_release="$(erlenv-release)"
+  current_release="$(erlenv-release-name || true)"
+  include_system="1"
+fi
+
+print_release() {
+  if [ "$1" == "$current_release" ]; then
+    echo "${hit_prefix}$(erlenv-release)"
+  else
+    echo "${miss_prefix}$1"
+  fi
+}
+
+# Include "system" in the non-bare output, if it exists
+if [ -n "$include_system" ] && ERLENV_RELEASE=system erlenv-which erl >/dev/null 2>&1; then
+  print_release system
 fi
 
 for path in "${ERLENV_ROOT}/releases/"*; do
   if [ -d "$path" ]; then
-    release="${path##*/}"
-
-    if [ "$release" == "$ERLENV_RELEASE_NAME" ]; then
-      echo "${hit_prefix}${print_release}"
-    else
-      echo "${miss_prefix}${release}"
-    fi
+    print_release "${path##*/}"
   fi
 done

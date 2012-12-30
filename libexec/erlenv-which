@@ -50,7 +50,7 @@ fi
 
 if [ "$ERLENV_RELEASE" = "system" ]; then
   PATH="$(remove_from_path "${ERLENV_ROOT}/shims")"
-  ERLENV_COMMAND_PATH="$(command -v "$ERLENV_COMMAND")"
+  ERLENV_COMMAND_PATH="$(command -v "$ERLENV_COMMAND" || true)"
 else
   ERLENV_COMMAND_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}/bin/${ERLENV_COMMAND}"
 fi

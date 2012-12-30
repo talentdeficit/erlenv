@@ -5,14 +5,13 @@ fi
 compctl -K _erlenv erlenv
 
 _erlenv() {
-  local word words completions
+  local words completions
   read -cA words
-  word="${words[2]}"
 
   if [ "${#words}" -eq 2 ]; then
     completions="$(erlenv commands)"
   else
-    completions="$(erlenv completions "${word}")"
+    completions="$(erlenv completions ${words[2,-1]})"
   fi
 
   reply=("${(ps:\n:)completions}")

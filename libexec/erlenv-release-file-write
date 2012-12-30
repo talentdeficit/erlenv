@@ -6,7 +6,7 @@ ERLENV_RELEASE_FILE="$1"
 ERLENV_RELEASE="$2"
 
 if [ -z "$ERLENV_RELEASE" ] || [ -z "$ERLENV_RELEASE_FILE" ]; then
-  echo "usage: erlenv write-release-file FILENAME RELEASE" >&2
+  echo "usage: erlenv release-file-write FILENAME RELEASE" >&2
   exit 1
 fi
 
