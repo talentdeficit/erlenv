@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Summary: List hook scripts for a given rbenv command
+# Usage: rbenv hooks <command>
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
@@ -12,7 +15,7 @@ fi
 
 ERLENV_COMMAND="$1"
 if [ -z "$ERLENV_COMMAND" ]; then
-  echo "usage: erlenv hooks COMMAND" >&2
+  erlenv-help --usage hooks >&2
   exit 1
 fi
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Summary: List existing rbenv shims
+# Usage: rbenv shims [--short]
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
