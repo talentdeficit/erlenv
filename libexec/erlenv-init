@@ -96,7 +96,7 @@ erlenv() {
 
   case "\$command" in
   ${commands[*]})
-    eval \`erlenv "sh-\$command" "\$@"\`;;
+    eval "\`erlenv "sh-\$command" "\$@"\`";;
   *)
     command erlenv "\$command" "\$@";;
   esac
