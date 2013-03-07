@@ -15,7 +15,11 @@ mkdir -p "$SHIM_PATH"
 set -o noclobber
 { echo > "$PROTOTYPE_SHIM_PATH"
 } 2>/dev/null ||
-{ echo "erlenv: cannot rehash: $PROTOTYPE_SHIM_PATH exists"
+{ if [ -w "$SHIM_PATH" ]; then
+    echo "erlenv: cannot rehash: $PROTOTYPE_SHIM_PATH exists"
+  else
+    echo "erlenv: cannot rehash: $SHIM_PATH isn't writable"
+  fi
   exit 1
 } >&2
 set +o noclobber
