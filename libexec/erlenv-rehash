@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
+# summary: rehash erlenv shims (run this after installing executables)
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
 SHIM_PATH="${ERLENV_ROOT}/shims"
 PROTOTYPE_SHIM_PATH="${SHIM_PATH}/.erlenv-shim"
 
-# create the shims directory if it doesn't already exist
+# Create the shims directory if it doesn't already exist.
 mkdir -p "$SHIM_PATH"
 
-# ensure only one instance of erlenv-rehash is running at a time by
+# Ensure only one instance of erlenv-rehash is running at a time by
 # setting the shell's `noclobber` option and attempting to write to
-# the prototype shim file. if the file already exists, print a warning
-# to stderr and exit with a non-zero status
+# the prototype shim file. If the file already exists, print a warning
+# to stderr and exit with a non-zero status.
 set -o noclobber
 { echo > "$PROTOTYPE_SHIM_PATH"
 } 2>/dev/null ||
@@ -24,32 +26,61 @@ set -o noclobber
 } >&2
 set +o noclobber
 
-# if we were able to obtain a lock, register a trap to clean up the
-# prototype shim when the process exits
+# If we were able to obtain a lock, register a trap to clean up the
+# prototype shim when the process exits.
 trap remove_prototype_shim EXIT
 
 remove_prototype_shim() {
   rm -f "$PROTOTYPE_SHIM_PATH"
 }
 
-# the prototype shim file is a script that re-execs itself, passing
-# its filename and any arguments to `erlenv exec`. this file is
-# hard-linked for every binary and then removed. the linking technique
-# is fast, uses less disk space than unique files, and also serves as
-# a locking mechanism
+# The prototype shim file is a script that re-execs itself, passing
+# its filename and any arguments to `erlenv exec`. This file is
+# hard-linked for every executable and then removed. The linking
+# technique is fast, uses less disk space than unique files, and also
+# serves as a locking mechanism.
 create_prototype_shim() {
   cat > "$PROTOTYPE_SHIM_PATH" <<SH
 #!/usr/bin/env bash
 set -e
+[ -n "\$ERLENV_DEBUG" ] && set -x
+
+program="\${0##*/}"
+if [ "\$program" = "erl" ]; then
+  for arg; do
+    case "\$arg" in
+    -e* | -- ) break ;;
+    */* )
+      if [ -f "\$arg" ]; then
+        export ERLENV_DIR="\${arg%/*}"
+        break
+      fi
+      ;;
+    esac
+  done
+fi
+
 export ERLENV_ROOT="$ERLENV_ROOT"
-exec erlenv exec "\${0##*/}" "\$@"
+exec "$(command -v erlenv)" exec "\$program" "\$@"
 SH
   chmod +x "$PROTOTYPE_SHIM_PATH"
 }
 
-# the basename of each argument passed to `make_shims` will be
-# registered for installation as a shim. in this way, plugins may call
-# `make_shims` with a glob to register many shims at once
+# If the contents of the prototype shim file differ from the contents
+# of the first shim in the shims directory, assume erlenv has been
+# upgraded and the existing shims need to be removed.
+remove_outdated_shims() {
+  for shim in *; do
+    if ! diff "$PROTOTYPE_SHIM_PATH" "$shim" >/dev/null 2>&1; then
+      for shim in *; do rm -f "$shim"; done
+    fi
+    break
+  done
+}
+
+# The basename of each argument passed to `make_shims` will be
+# registered for installation as a shim. In this way, plugins may call
+# `make_shims` with a glob to register many shims at once.
 make_shims() {
   local shims="$@"
 
@@ -59,96 +90,67 @@ make_shims() {
   done
 }
 
-# create an empty array for the list of registered shims
+# Create an empty array for the list of registered shims and an empty
+# string to use as a search index.
 registered_shims=()
+registered_shims_index=""
 
-# we will keep track of shims registered for installation with the
-# global `reigstered_shims` array and with a global variable for each
-# shim. the array will let us iterate over all registered shims. the
-# global variables will let us quickly check whether a shim with the
-# given name has been registered or not
+# We will keep track of shims registered for installation with the
+# global `registered_shims` array and with a global search index
+# string. The array will let us iterate over all registered shims. The
+# index string will let us quickly check whether a shim with the given
+# name has been registered or not.
 register_shim() {
   local shim="$@"
-  local var="$(shim_variable_name "$shim")"
-
-  if [ -z "${!var}" ]; then
-    registered_shims[${#registered_shims[*]}]="$shim"
-    eval "${var}=1"
-  fi
+  registered_shims["${#registered_shims[@]}"]="$shim"
+  registered_shims_index="$registered_shims_index/$shim/"
 }
 
-# to compute the global variable name for a given shim we must first
-# escape any non-alphanumeric characters. if the shim name is
-# alphanumeric (including a hyphen or underscore) we can take a
-# shorter path. otherwise, we must iterate over each character and
-# escape the non-alphanumeric ones using `printf`
-shim_variable_name() {
-  local shim="$1"
-  local result="_shim_"
-
-  if [[ ! "$shim" =~ [^[:alnum:]_-] ]]; then
-    shim="${shim//_/_5f}"
-    shim="${shim//-/_2d}"
-    result="$result$shim"
-  else
-    local length="${#shim}"
-    local char i
-
-    for ((i=0; i<length; i++)); do
-      char="${shim:$i:1}"
-      if [[ "$char" =~ [[:alnum:]] ]]; then
-        result="$result$char"
-      else
-        result="$result$(printf "_%02x" \'"$char")"
-      fi
-    done
-  fi
-
-  echo "$result"
-}
-
-# to install all the registered shims, we iterate over the
+# To install all the registered shims, we iterate over the
 # `registered_shims` array and create a link if one does not already
-# exist
+# exist.
 install_registered_shims() {
+  local shim
   for shim in "${registered_shims[@]}"; do
     [ -e "$shim" ] || ln -f "$PROTOTYPE_SHIM_PATH" "$shim"
   done
 }
 
-# once the registered shims have been installed, we make a second pass
-# over the contents of the shims directory. any file that is present
+# Once the registered shims have been installed, we make a second pass
+# over the contents of the shims directory. Any file that is present
 # in the directory but has not been registered as a shim should be
-# removed
+# removed.
 remove_stale_shims() {
-  local var
+  local shim
   for shim in *; do
-    var="$(shim_variable_name "$shim")"
-    if [ -z "${!var}" ]; then
-      rm -f "$shim" 
+    if [[ "$registered_shims_index" != *"/$shim/"* ]]; then
+      rm -f "$shim"
     fi
   done
 }
 
 
-# change to the shims directory
+# Change to the shims directory.
 cd "$SHIM_PATH"
-
-# create the prototype shim, then register shims for all known binaries
-create_prototype_shim
 shopt -s nullglob
-make_shims ../releases/*/bin/*
 
-# restore the previous working directory
+# Create the prototype shim, then register shims for all known
+# executables.
+create_prototype_shim
+remove_outdated_shims
+make_shims ../versions/*/bin/*
+
+# Restore the previous working directory.
 cd "$OLDPWD"
 
-# allow plugins to register shims
+# Allow plugins to register shims.
 for script in $(erlenv-hooks rehash); do
   source "$script"
 done
 
-# change back to the shims directory to install the registered shims
-# and remove stale shims
+# Change back to the shims directory to install the registered shims
+# and remove stale shims.
 cd "$SHIM_PATH"
 install_registered_shims
 remove_stale_shims
+

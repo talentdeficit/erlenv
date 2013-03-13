@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+# Summary: Set or show the shell-specific erlang release
+#
+# Usage: erlenv shell <release>
+# erlenv shell --unset
+#
+# Sets a shell-specific erlang release by setting the `ERLENV_RELEASE'
+# environment variable in your shell. This version overrides local
+# application-specific releases and the global release.
+#
+# <release> should be a string matching a erlang release known to erlenv.
+# The special release string `system' will use your default system erlang.
+# Run `erlenv releases' for a list of available erlang releases.
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
@@ -23,10 +35,14 @@ fi
 
 if [ "$release" = "--unset" ]; then
   echo "unset ERLENV_RELEASE"
-  exit 1
+  exit
 fi
 
 # make sure the specified release is installed.
-erlenv-prefix "$erlenv" >/dev/null
-
-echo "export ERLENV_RELEASE=\"${release}\""
+if erlenv-prefix "$release" >/dev/null; then
+  echo "export ERLENV_RELEASE=\"${release}\""
+  exit
+else
+  echo "return 1"
+  exit 1
+fi

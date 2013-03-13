@@ -2,14 +2,19 @@
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-root="$ERLENV_DIR"
-while [ -n "$root" ]; do
-  if [ -e "${root}/.erlang-release" ]; then
-    echo "${root}/.erlang-release"
-    exit
-  fi
+find_local_release_file() {
+  local root="$1"
+  while [ -n "$root" ]; do
+    if [ -e "${root}/.erlang-release" ]; then
+      echo "${root}/.erlang-release"
+      exit
+    fi
   root="${root%/*}"
-done
+  done
+}
+
+find_local_release_file "$ERLENV_DIR"
+[ "$ERLENV_DIR" = "$PWD" ] || find_local_release_file "$PWD"
 
 global_release_file="${ERLENV_ROOT}/release"
 

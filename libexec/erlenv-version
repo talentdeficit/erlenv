@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Summary: Display the version of rbenv
+# Summary: Display the version of erlenv
 #
-# Displays the version number of this rbenv release, including the
+# Displays the version number of this erlenv release, including the
 # current revision from git, if available.
 #
 # The format of the git revision is:
@@ -14,8 +14,9 @@ set -e
 
 version="0.4.0"
 
-cd "$ERLENV_ROOT"
-git_revision="$(git describe --tags HEAD 2>/dev/null || true)"
-git_revision="${git_revision#v}"
+if cd "$ERLENV_ROOT" 2>/dev/null; then
+  git_revision="$(git describe --tags HEAD 2>/dev/null || true)"
+  git_revision="${git_revision#v}"
+fi
 
 echo "erlenv ${git_revision:-$version}"

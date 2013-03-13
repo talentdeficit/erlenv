@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Usage: erlenv release-file-read <file>
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
