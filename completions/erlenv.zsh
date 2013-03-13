@@ -1,5 +1,5 @@
 if [[ ! -o interactive ]]; then
-return
+  return
 fi
 
 compctl -K _erlenv erlenv
@@ -9,10 +9,10 @@ _erlenv() {
   read -cA words
 
   if [ "${#words}" -eq 2 ]; then
-completions="$(erlenv commands)"
+    completions="$(erlenv commands)"
   else
-completions="$(erlenv completions ${words[2,-2]})"
+    completions="$(erlenv completions ${words[2,-2]})"
   fi
 
-reply=("${(ps:\n:)completions}")
+  reply=("${(ps:\n:)completions}")
 }
