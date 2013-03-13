@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Usage: erlenv release-file-write <file> <release>
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

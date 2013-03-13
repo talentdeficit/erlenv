@@ -72,7 +72,7 @@ case "$command" in
 "" | "-h" | "--help" )
   echo -e "$(erlenv-version)\n$(erlenv-help)" >&2
   ;;
-"-v" )
+"-v" | "--version" )
   exec erlenv-version
   ;;
 * )

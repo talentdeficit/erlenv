@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Summary: List all erlang releases that contain the given executable
+# Usage: erlenv whence [--path] <command>
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

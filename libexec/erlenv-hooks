@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Summary: List hook scripts for a given rbenv command
-# Usage: rbenv hooks <command>
+# Summary: List hook scripts for a given erlenv command
+# Usage: erlenv hooks <command>
 
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x

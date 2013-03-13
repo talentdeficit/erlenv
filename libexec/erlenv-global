@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# Summary: Set or show the global Ruby version
+#
+# Usage: erlenv global <release>
+#
+# Sets the global erlang release. You can override the global release at
+# any time by setting a directory-specific release with `erlenv local'
+# or by setting the `ERLENV_RELEASE' environment variable.
+#
+# <release> should be a string matching an erlang release known to erlenv.
+# The special release string `system' will use your default system erlang.
+# Run `erlenv releases' for a list of available erlang releases.
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

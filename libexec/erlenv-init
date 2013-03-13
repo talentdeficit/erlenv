@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Summary: Configure the shell environment for rbenv
-# Usage: eval "$(rbenv init - [--no-rehash] [<shell>])"
+# Summary: Configure the shell environment for erlenv
+# Usage: eval "$(erlenv init - [--no-rehash] [<shell>])"
 
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x

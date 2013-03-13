@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Summary: Display the full path to an executable
+#
+# Usage: erlenv which <command>
+#
+# Displays the full path to the executable that erlenv will invoke when
+# you run the given command.
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

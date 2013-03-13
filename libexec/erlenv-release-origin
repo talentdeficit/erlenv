@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Summary: Explain how the current erlang release is set
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

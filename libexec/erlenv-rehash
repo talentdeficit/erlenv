@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# summary: rehash erlenv shims (run this after installing executables)
+# Summary: rehash erlenv shims (run this after installing executables)
 
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x

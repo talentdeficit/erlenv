@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Summary: List all erlang releases available to erlenv
+# Usage: erlenv versions [--bare]
+#
+# Lists all erlang releases found in `$ERLENV_ROOT/releases/*'.
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 

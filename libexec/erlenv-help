@@ -1,103 +1,161 @@
 #!/usr/bin/env bash
+# Summary: Display help for a command
+#
+# Usage: erlenv help [--usage] COMMAND
+#
+# Parses and displays help contents from a command's source file.
+#
+# A command is considered documented if it starts with a comment block
+# that has a `Summary:' or `Usage:' section. Usage instructions can
+# span multiple lines as long as subsequent lines are indented.
+# The remainder of the comment block is displayed as extended
+# documentation.
+
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
-print_set_release() {
-  echo "<release> should be a string matching a release known by erlenv"
-
-  local releases="$(erlenv-releases --bare)"
-  if [ -z "$releases" ]; then
-    echo "there are currently no releases installed for erlenv"
-  else
-    echo "the currently installed releases are:"
-    echo "$releases" | sed 's/^/  /'
-  fi
-
-  echo
-  echo "the special release string 'system' will use your default system erlang"
+command_path() {
+  local command="$1"
+  command -v erlenv-"$command" || command -v erlenv-sh-"$command" || true
 }
 
-case "$1" in
-"") echo "usage: erlenv <command> [<args>]
+extract_initial_comment_block() {
+  sed -ne "
+/^#/ !{
+q
+}
 
-some useful erlenv commands are:
-   commands      list all erlenv commands
-   rehash        rehash erlenv shims (run this after installing binaries)
-   global        set or show the global release
-   local         set or show the local directory-specific release
-   shell         set or show the shell-specific release
-   release       show the current release
-   releases      list all releases known by erlenv
-   which         show the full path for the given command
-   whence        list all releases with the command
+s/^#$/# /
 
-see 'erlenv help <command>' for information on a specific command.
-for full documentation, see: https://github.com/talentdeficit/erlenv#readme"
-;;
-commands) echo "usage: erlenv commands
-       erlenv commands --sh
-       erlenv commands --no-sh
+/^# / {
+s/^# //
+p
+}
+"
+}
 
-list all erlenv commands"
-;;
-global) echo "usage: rbenv global <release>
+collect_documentation() {
+  awk '
+/^Summary:/ {
+summary = substr($0, 10)
+next
+}
 
-sets the global release. you can override the global release at
-any time by setting a directory-specific release with \`erlenv local'
-or by setting the ERLENV_RELEASE environment variable
+/^Usage:/ {
+reading_usage = 1
+usage = usage "\n" $0
+next
+}
 
-$(print_set_release)"
-;;
-local) echo "usage: rbenv local <release>
-       rbenv local --unset
+/^( *$| )/ && reading_usage {
+usage = usage "\n" $0
+next
+}
 
-sets the local directory-specific release by writing the release
-name to a file named '.erlenv-release'
+{
+reading_usage = 0
+help = help "\n" $0
+}
 
-when you run an erlang command, erlenv will look for an '.erlenv-release'
-file in the current directory and each parent directory. if no such
-file is found in the tree, erlenv will use the global erlang release
-specified with \`erlenv global', or the release specified in the
-ERLENV_RELEASE environment variable
+function escape(str) {
+gsub(/[`\\$"]/, "\\\\&", str)
+return str
+}
 
-$(print_set_release)"
-;;
-shell) echo "usage: erlenv shell <release>
-       erlenv shell --unset
+function trim(str) {
+sub(/^\n*/, "", str)
+sub(/\n*$/, "", str)
+return str
+}
 
-sets a shell-specific erlang release by setting the 'ERLENV_RELEASE'
-environment variable in your shell. this release overrides both
-project-specific releases and the global release
+END {
+if (usage || summary) {
+print "summary=\"" escape(summary) "\""
+print "usage=\"" escape(trim(usage)) "\""
+print "help=\"" escape(trim(help)) "\""
+}
+}
+'
+}
 
-$(print_set_release)"
-;;
-release) echo "usage: erlenv release
-
-lists the current active release"
-;;
-releases) echo "usage: erlenv releases
-       erlenv releases --bare
-
-lists all releases known by erlenv"
-;;
-which) echo "usage: erlenv which <command>
-
-displays the full path to the binary that erlenv will execute when you
-run the given command"
-;;
-whence) echo "usage: erlenv whence <command>
-
-lists all releases with the given command installed."
-;;
-*)
-  command_path="$(command -v "erlenv-$1" || true)"
-  if [ -n "$command_path" ]; then
-    echo "sorry, the \`$1' command isn't documented yet"
-    echo
-    echo "you can view the command's source here:"
-    echo "$command_path"
-    echo
-  else
-    echo "erlenv: no such command \`$1'"
+documentation_for() {
+  local filename="$(command_path "$1")"
+  if [ -n "$filename" ]; then
+extract_initial_comment_block < "$filename" | collect_documentation
   fi
-esac
+}
+
+print_summary() {
+  local command="$1"
+  local summary usage help
+eval "$(documentation_for "$command")"
+
+  if [ -n "$summary" ]; then
+printf " %-9s %s\n" "$command" "$summary"
+  fi
+}
+
+print_summaries() {
+  for command; do
+print_summary "$command"
+  done
+}
+
+print_help() {
+  local command="$1"
+  local summary usage help
+eval "$(documentation_for "$command")"
+  [ -n "$help" ] || help="$summary"
+
+  if [ -n "$usage" -o -n "$summary" ]; then
+if [ -n "$usage" ]; then
+echo "$usage"
+    else
+echo "Usage: erlenv ${command}"
+    fi
+if [ -n "$help" ]; then
+echo
+echo "$help"
+      echo
+fi
+else
+echo "Sorry, this command isn't documented yet." >&2
+    return 1
+  fi
+}
+
+print_usage() {
+  local command="$1"
+  local summary usage help
+eval "$(documentation_for "$command")"
+  [ -z "$usage" ] || echo "$usage"
+}
+
+unset usage
+if [ "$1" = "--usage" ]; then
+usage="1"
+  shift
+fi
+
+if [ -z "$1" ] || [ "$1" == "rbenv" ]; then
+echo "Usage: erlenv <command> [<args>]"
+  [ -z "$usage" ] || exit
+echo
+echo "Some useful erlenv commands are:"
+  print_summaries commands local global shell install uninstall rehash release releases which whence
+  echo
+echo "See \`erlenv help <command>' for information on a specific command."
+  echo "For full documentation, see: https://github.com/talentdeficit/erlenv#readme"
+else
+command="$1"
+  if [ -n "$(command_path "$command")" ]; then
+if [ -n "$usage" ]; then
+print_usage "$command"
+    else
+print_help "$command"
+    fi
+else
+echo "erlenv: no such command \`$command'" >&2
+    exit 1
+  fi
+fi

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Summary: List all available rbenv commands
-# Usage: rbenv commands [--sh|--no-sh]
+# Summary: List all available erlenv commands
+# Usage: erlenv commands [--sh|--no-sh]
 
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x

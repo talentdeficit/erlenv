@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Summary: Detect the file that sets the current erlenv release
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
 
