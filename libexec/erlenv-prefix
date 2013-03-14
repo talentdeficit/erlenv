@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+#
 # Summary: Display prefix for a erlang release
+#
 # Usage: erlenv prefix [<release>]
 #
 # Displays the directory where an erlang release is installed. If no
@@ -16,21 +18,21 @@ echo system
 fi
 
 if [ -n "$1" ]; then
-export ERLENV_RELEASE="$1"
+  export ERLENV_RELEASE="$1"
 elif [ -z "$ERLENV_RELEASE" ]; then
-ERLENV_RELEASE="$(erlenv-release-name)"
+  ERLENV_RELEASE="$(erlenv-release-name)"
 fi
 
 if [ "$ERLENV_RELEASE" = "system" ]; then
-  ERL_PATH="$(erlenv-which erl)"
-  ERL_PATH="${ERL_PATH%/*}"
-  echo "${ERL_PATH%/bin}"
-  exit
+  if output=$(erlenv-system); then
+    ERLENV_PREFIX_PATH=${output%/bin}
+  fi
+else
+  ERLENV_PREFIX_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}"
 fi
 
-ERLENV_PREFIX_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}"
 if [ ! -d "$ERLENV_PREFIX_PATH" ]; then
-echo "erlenv: release \`${ERLENV_RELEASE}' not installed" >&2
+  echo "erlenv: release \`${ERLENV_RELEASE}' not installed" >&2
   exit 1
 fi
 

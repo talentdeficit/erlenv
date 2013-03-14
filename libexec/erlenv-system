@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Summary: Return the path to system erlang or fail with an error
+#
+# Usage: erlenv system
+
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+IFS=:, paths=($PATH)
+
+for path in "${paths[@]}"; do
+  if [ "$path" != "${ERLENV_ROOT}/shims" ] && [ -x "${path}/erl" ]; then
+    system_erlang="$path"
+    break
+  fi
+done
+
+if [ -z "$system_erlang" ]; then
+  exit 1
+else
+  echo "$system_erlang"
+fi
