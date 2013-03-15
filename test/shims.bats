@@ -3,27 +3,31 @@
 load test_helper
 
 @test "no shims" {
-  run rbenv-shims
+  run erlenv-shims
   assert_success
   assert [ -z "$output" ]
 }
 
 @test "shims" {
-  mkdir -p "${RBENV_ROOT}/shims"
-  touch "${RBENV_ROOT}/shims/ruby"
-  touch "${RBENV_ROOT}/shims/irb"
-  run rbenv-shims
+  mkdir -p "${ERLENV_ROOT}/shims"
+  touch "${ERLENV_ROOT}/shims/erl"
+  touch "${ERLENV_ROOT}/shims/erlc"
+  touch "${ERLENV_ROOT}/shims/dialyzer"
+  run erlenv-shims
   assert_success
-  assert_line "${RBENV_ROOT}/shims/ruby"
-  assert_line "${RBENV_ROOT}/shims/irb"
+  assert_line "${ERLENV_ROOT}/shims/erl"
+  assert_line "${ERLENV_ROOT}/shims/erlc"
+  assert_line "${ERLENV_ROOT}/shims/dialyzer"
 }
 
 @test "shims --short" {
-  mkdir -p "${RBENV_ROOT}/shims"
-  touch "${RBENV_ROOT}/shims/ruby"
-  touch "${RBENV_ROOT}/shims/irb"
-  run rbenv-shims --short
+  mkdir -p "${ERLENV_ROOT}/shims"
+  touch "${ERLENV_ROOT}/shims/erl"
+  touch "${ERLENV_ROOT}/shims/erlc"
+  touch "${ERLENV_ROOT}/shims/dialyzer"
+  run erlenv-shims --short
   assert_success
-  assert_line "irb"
-  assert_line "ruby"
+  assert_line "erl"
+  assert_line "erlc"
+  assert_line "dialyzer"
 }

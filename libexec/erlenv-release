@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Summary: Show the current erlang release and its origin
+#
+# Shows the currently selected erlang release and how it was
+# selected. To obtain only the release string, use `erlenv
+# release-name'.
+
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+echo "$(erlenv-release-name) (set by $(erlenv-release-origin))"

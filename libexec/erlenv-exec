@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Summary: Run an executable with the selected erlang release
+#
+# Usage: erlenv exec <command> [arg1 arg2...]
+#
+# Runs an executable by first preparing PATH so that the selected erlang
+# release's `bin' directory is at the front.
+#
+# For example, if the currently selected erlang release is r16b:
+#   erlenv exec dialyzer app.erl
+#
+# is equivalent to:
+#   PATH="$ERLENV_ROOT/releases/r16b/bin:$PATH" dialyzer app.erl
+
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# Provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  exec erlenv shims --short
+fi
+
+export ERLENV_RELEASE="$(erlenv-release-name)"
+ERLENV_COMMAND="$1"
+
+if [ -z "$ERLENV_COMMAND" ]; then
+  erlenv-help --usage exec >&2
+  exit 1
+fi
+
+ERLENV_COMMAND_PATH="$(erlenv-which "$ERLENV_COMMAND")"
+ERLENV_BIN_PATH="${ERLENV_COMMAND_PATH%/*}"
+
+for script in $(erlenv-hooks exec); do
+  source "$script"
+done
+
+shift 1
+if [ "$ERLENV_RELEASE" != "system" ]; then
+  export PATH="${ERLENV_BIN_PATH}:${PATH}"
+fi
+exec -a "$ERLENV_COMMAND" "$ERLENV_COMMAND_PATH" "$@"

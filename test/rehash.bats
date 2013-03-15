@@ -3,25 +3,25 @@
 load test_helper
 
 @test "empty rehash" {
-  assert [ ! -d "${RBENV_ROOT}/shims" ]
-  run rbenv-rehash
+  assert [ ! -d "${ERLENV_ROOT}/shims" ]
+  run erlenv-rehash
   assert_success
-  assert [ -d "${RBENV_ROOT}/shims" ]
-  rmdir "${RBENV_ROOT}/shims"
+  assert [ -d "${ERLENV_ROOT}/shims" ]
+  rmdir "${ERLENV_ROOT}/shims"
 }
 
 @test "non-writable shims directory" {
-  mkdir -p "${RBENV_ROOT}/shims"
-  chmod -w "${RBENV_ROOT}/shims"
-  run rbenv-rehash
+  mkdir -p "${ERLENV_ROOT}/shims"
+  chmod -w "${ERLENV_ROOT}/shims"
+  run erlenv-rehash
   assert_failure
-  assert_output "rbenv: cannot rehash: ${RBENV_ROOT}/shims isn't writable"
+  assert_output "erlenv: cannot rehash: ${ERLENV_ROOT}/shims isn't writable"
 }
 
 @test "rehash in progress" {
-  mkdir -p "${RBENV_ROOT}/shims"
-  touch "${RBENV_ROOT}/shims/.rbenv-shim"
-  run rbenv-rehash
+  mkdir -p "${ERLENV_ROOT}/shims"
+  touch "${ERLENV_ROOT}/shims/.erlenv-shim"
+  run erlenv-rehash
   assert_failure
-  assert_output "rbenv: cannot rehash: ${RBENV_ROOT}/shims/.rbenv-shim exists"
+  assert_output "erlenv: cannot rehash: ${ERLENV_ROOT}/shims/.erlenv-shim exists"
 }

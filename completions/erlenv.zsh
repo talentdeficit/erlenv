@@ -2,16 +2,16 @@ if [[ ! -o interactive ]]; then
     return
 fi
 
-compctl -K _rbenv rbenv
+compctl -K _erlenv erlenv
 
-_rbenv() {
+_erlenv() {
   local words completions
   read -cA words
 
   if [ "${#words}" -eq 2 ]; then
-    completions="$(rbenv commands)"
+    completions="$(erlenv commands)"
   else
-    completions="$(rbenv completions ${words[2,-2]})"
+    completions="$(erlenv completions ${words[2,-2]})"
   fi
 
   reply=("${(ps:\n:)completions}")

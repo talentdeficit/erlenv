@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Summary: Set or show the global erlang release
+#
+# Usage: erlenv global <release>
+#
+# Sets the global erlang release. You can override the global release at
+# any time by setting a directory-specific release with `erlenv local'
+# or by setting the `ERLENV_RELEASE' environment variable.
+#
+# <release> should be a string matching a erlang release known to erlenv.
+# The special release string `system' will use your default system erlang.
+# Run `erlenv releases' for a list of available erlang releases.
+
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+# Provide erlenv completions
+if [ "$1" = "--complete" ]; then
+  echo system
+  exec erlenv-releases --bare
+fi
+
+ERLENV_RELEASE="$1"
+ERLENV_RELEASE_FILE="${ERLENV_ROOT}/release"
+
+if [ -n "$ERLENV_RELEASE" ]; then
+  erlenv-release-file-write "$ERLENV_RELEASE_FILE" "$ERLENV_RELEASE"
+else
+  erlenv-release-file-read "$ERLENV_RELEASE_FILE" ||
+  erlenv-release-file-read "${ERLENV_ROOT}/global" ||
+  erlenv-release-file-read "${ERLENV_ROOT}/default" ||
+  echo system
+fi

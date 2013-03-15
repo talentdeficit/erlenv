@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Summary: List all erlang releases available to erlenv
+# Usage: erlenv releases [--bare]
+#
+# Lists all erlang releases found in `$ERLENV_ROOT/releases/*'.
+
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+if [ "$1" = "--bare" ]; then
+  hit_prefix=""
+  miss_prefix=""
+  current_release=""
+  include_system=""
+else
+  hit_prefix="* "
+  miss_prefix="  "
+  current_release="$(erlenv-release-name || true)"
+  include_system="1"
+fi
+
+print_release() {
+  if [ "$1" == "$current_release" ]; then
+    echo "${hit_prefix}$(erlenv-release 2>/dev/null)"
+  else
+    echo "${miss_prefix}$1"
+  fi
+}
+
+# Include "system" in the non-bare output, if it exists
+if [ -n "$include_system" ] && ERLENV_RELEASE=system erlenv-which erl >/dev/null 2>&1; then
+  print_release system
+fi
+
+for path in "${ERLENV_ROOT}/releases/"*; do
+  if [ -d "$path" ]; then
+    print_release "${path##*/}"
+  fi
+done

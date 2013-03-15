@@ -1,24 +1,24 @@
-RBENV_TEST_DIR="${BATS_TMPDIR}/rbenv"
-export RBENV_ROOT="${RBENV_TEST_DIR}/root"
-export HOME="${RBENV_TEST_DIR}/home"
+ERLENV_TEST_DIR="${BATS_TMPDIR}/erlenv"
+export ERLENV_ROOT="${ERLENV_TEST_DIR}/root"
+export HOME="${ERLENV_TEST_DIR}/home"
 
-unset RBENV_VERSION
-unset RBENV_DIR
+unset ERLENV_RELEASE
+unset ERLENV_DIR
 
-export PATH="${RBENV_TEST_DIR}/bin:$PATH"
+export PATH="${ERLENV_TEST_DIR}/bin:$PATH"
 export PATH="${BATS_TEST_DIRNAME}/../libexec:$PATH"
 export PATH="${BATS_TEST_DIRNAME}/libexec:$PATH"
-export PATH="${RBENV_ROOT}/shims:$PATH"
+export PATH="${ERLENV_ROOT}/shims:$PATH"
 
 teardown() {
-  rm -rf "$RBENV_TEST_DIR"
+  rm -rf "$ERLENV_TEST_DIR"
 }
 
 flunk() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "$@"
     fi
-  } | sed "s:${RBENV_TEST_DIR}:TEST_DIR:" >&2
+  } | sed "s:${ERLENV_TEST_DIR}:TEST_DIR:" >&2
   return 1
 }
 

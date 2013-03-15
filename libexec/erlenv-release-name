@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Summary: Show the current erlang release
+set -e
+[ -n "$ERLENV_DEBUG" ] && set -x
+
+if [ -z "$ERLENV_RELEASE" ]; then
+  ERLENV_RELEASE_FILE="$(erlenv-release-file)"
+  ERLENV_RELEASE="$(erlenv-release-file-read "$ERLENV_RELEASE_FILE" || true)"
+fi
+
+if [ -z "$ERLENV_RELEASE" ] || [ "$ERLENV_RELEASE" = "system" ]; then
+  echo "system"
+  exit
+fi
+
+release_exists() {
+  local release="$1"
+  [ -d "${ERLENV_ROOT}/releases/${release}" ]
+}
+
+if release_exists "$ERLENV_RELEASE"; then
+  echo "$ERLENV_RELEASE"
+elif release_exists "${ERLENV_RELEASE#erlang-}"; then
+  { echo "warning: ignoring extraneous \`erlang-' prefix in release \`${ERLENV_RELEASE}'"
+    echo "         (set by $(erlenv-release-origin))"
+  } >&2
+  echo "${ERLENV_RELEASE#erlang-}"
+else
+  echo "erlenv: release \`$ERLENV_RELEASE' is not installed" >&2
+  exit 1
+fi
