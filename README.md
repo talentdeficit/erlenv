@@ -1,3 +1,7 @@
+## important note ##
+
+this is a dead end branch preserved mostly for curiosity sake. all it's history is somewhere in the mainline branches so probably don't muck around here too much, k?
+
 # simple erlang release management: erlenv
 
 erlenv lets you easily switch between multiple erlang releases. it's
