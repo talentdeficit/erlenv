@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Summary: List hook scripts for a given erlenv command
-# Usage: erlenv hooks <command>
+# Summary: List hook scripts for a given rbenv command
+# Usage: rbenv hooks <command>
 
 set -e
-[ -n "$ERLENV_DEBUG" ] && set -x
+[ -n "$RBENV_DEBUG" ] && set -x
 
-# provide erlenv completions
+# Provide rbenv completions
 if [ "$1" = "--complete" ]; then
   echo exec
   echo rehash
@@ -13,9 +13,9 @@ if [ "$1" = "--complete" ]; then
   exit
 fi
 
-ERLENV_COMMAND="$1"
-if [ -z "$ERLENV_COMMAND" ]; then
-  erlenv-help --usage hooks >&2
+RBENV_COMMAND="$1"
+if [ -z "$RBENV_COMMAND" ]; then
+  rbenv-help --usage hooks >&2
   exit 1
 fi
 
@@ -38,8 +38,8 @@ realpath() {
 }
 
 shopt -s nullglob
-for path in ${ERLENV_HOOK_PATH//:/$'\n'}; do
-  for script in $path/"$ERLENV_COMMAND"/*.bash; do
+for path in ${RBENV_HOOK_PATH//:/$'\n'}; do
+  for script in $path/"$RBENV_COMMAND"/*.bash; do
     echo $(realpath $script)
   done
 done

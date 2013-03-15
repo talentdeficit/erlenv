@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Summary: rehash erlenv shims (run this after installing executables)
+# Summary: Rehash rbenv shims (run this after installing executables)
 
 set -e
-[ -n "$ERLENV_DEBUG" ] && set -x
+[ -n "$RBENV_DEBUG" ] && set -x
 
-SHIM_PATH="${ERLENV_ROOT}/shims"
-PROTOTYPE_SHIM_PATH="${SHIM_PATH}/.erlenv-shim"
+SHIM_PATH="${RBENV_ROOT}/shims"
+PROTOTYPE_SHIM_PATH="${SHIM_PATH}/.rbenv-shim"
 
 # Create the shims directory if it doesn't already exist.
 mkdir -p "$SHIM_PATH"
 
-# Ensure only one instance of erlenv-rehash is running at a time by
+# Ensure only one instance of rbenv-rehash is running at a time by
 # setting the shell's `noclobber` option and attempting to write to
 # the prototype shim file. If the file already exists, print a warning
 # to stderr and exit with a non-zero status.
@@ -18,9 +18,9 @@ set -o noclobber
 { echo > "$PROTOTYPE_SHIM_PATH"
 } 2>/dev/null ||
 { if [ -w "$SHIM_PATH" ]; then
-    echo "erlenv: cannot rehash: $PROTOTYPE_SHIM_PATH exists"
+    echo "rbenv: cannot rehash: $PROTOTYPE_SHIM_PATH exists"
   else
-    echo "erlenv: cannot rehash: $SHIM_PATH isn't writable"
+    echo "rbenv: cannot rehash: $SHIM_PATH isn't writable"
   fi
   exit 1
 } >&2
@@ -35,7 +35,7 @@ remove_prototype_shim() {
 }
 
 # The prototype shim file is a script that re-execs itself, passing
-# its filename and any arguments to `erlenv exec`. This file is
+# its filename and any arguments to `rbenv exec`. This file is
 # hard-linked for every executable and then removed. The linking
 # technique is fast, uses less disk space than unique files, and also
 # serves as a locking mechanism.
@@ -43,16 +43,16 @@ create_prototype_shim() {
   cat > "$PROTOTYPE_SHIM_PATH" <<SH
 #!/usr/bin/env bash
 set -e
-[ -n "\$ERLENV_DEBUG" ] && set -x
+[ -n "\$RBENV_DEBUG" ] && set -x
 
 program="\${0##*/}"
-if [ "\$program" = "erl" ]; then
+if [ "\$program" = "ruby" ]; then
   for arg; do
     case "\$arg" in
     -e* | -- ) break ;;
     */* )
       if [ -f "\$arg" ]; then
-        export ERLENV_DIR="\${arg%/*}"
+        export RBENV_DIR="\${arg%/*}"
         break
       fi
       ;;
@@ -60,14 +60,14 @@ if [ "\$program" = "erl" ]; then
   done
 fi
 
-export ERLENV_ROOT="$ERLENV_ROOT"
-exec "$(command -v erlenv)" exec "\$program" "\$@"
+export RBENV_ROOT="$RBENV_ROOT"
+exec "$(command -v rbenv)" exec "\$program" "\$@"
 SH
   chmod +x "$PROTOTYPE_SHIM_PATH"
 }
 
 # If the contents of the prototype shim file differ from the contents
-# of the first shim in the shims directory, assume erlenv has been
+# of the first shim in the shims directory, assume rbenv has been
 # upgraded and the existing shims need to be removed.
 remove_outdated_shims() {
   for shim in *; do
@@ -138,13 +138,13 @@ shopt -s nullglob
 # executables.
 create_prototype_shim
 remove_outdated_shims
-make_shims ../releases/*/bin/*
+make_shims ../versions/*/bin/*
 
 # Restore the previous working directory.
 cd "$OLDPWD"
 
 # Allow plugins to register shims.
-for script in $(erlenv-hooks rehash); do
+for script in $(rbenv-hooks rehash); do
   source "$script"
 done
 
@@ -153,4 +153,3 @@ done
 cd "$SHIM_PATH"
 install_registered_shims
 remove_stale_shims
-

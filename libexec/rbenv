@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -e
+export -n CDPATH
+
+if [ "$1" = "--debug" ]; then
+  export RBENV_DEBUG=1
+  shift
+fi
+
+if [ -n "$RBENV_DEBUG" ]; then
+  export PS4='+ [${BASH_SOURCE##*/}:${LINENO}] '
+  set -x
+fi
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+if [ -z "${RBENV_ROOT}" ]; then
+  RBENV_ROOT="${HOME}/.rbenv"
+else
+  RBENV_ROOT="${RBENV_ROOT%/}"
+fi
+export RBENV_ROOT
+
+if [ -z "${RBENV_DIR}" ]; then
+  RBENV_DIR="$(pwd)"
+else
+  cd "$RBENV_DIR" 2>/dev/null || {
+    echo "rbenv: cannot change working directory to \`$RBENV_DIR'"
+    exit 1
+  } >&2
+  RBENV_DIR="$(pwd)"
+  cd "$OLDPWD"
+fi
+export RBENV_DIR
+
+
+shopt -s nullglob
+
+bin_path="$(abs_dirname "$0")"
+for plugin_bin in "${RBENV_ROOT}/plugins/"*/bin; do
+  bin_path="${bin_path}:${plugin_bin}"
+done
+export PATH="${bin_path}:${PATH}"
+
+hook_path="${RBENV_HOOK_PATH}:${RBENV_ROOT}/rbenv.d:/usr/local/etc/rbenv.d:/etc/rbenv.d:/usr/lib/rbenv/hooks"
+for plugin_hook in "${RBENV_ROOT}/plugins/"*/etc/rbenv.d; do
+  hook_path="${hook_path}:${plugin_hook}"
+done
+export RBENV_HOOK_PATH="$hook_path"
+
+shopt -u nullglob
+
+
+command="$1"
+case "$command" in
+"" | "-h" | "--help" )
+  echo -e "$(rbenv---version)\n$(rbenv-help)" >&2
+  ;;
+"-v" )
+  exec rbenv---version
+  ;;
+* )
+  command_path="$(command -v "rbenv-$command" || true)"
+  if [ -z "$command_path" ]; then
+    echo "rbenv: no such command \`$command'" >&2
+    exit 1
+  fi
+
+  shift 1
+  exec "$command_path" "$@"
+  ;;
+esac

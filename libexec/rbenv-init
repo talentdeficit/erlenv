@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Summary: Configure the shell environment for erlenv
-# Usage: eval "$(erlenv init - [--no-rehash] [<shell>])"
+# Summary: Configure the shell environment for rbenv
+# Usage: eval "$(rbenv init - [--no-rehash] [<shell>])"
 
 set -e
-[ -n "$ERLENV_DEBUG" ] && set -x
+[ -n "$RBENV_DEBUG" ] && set -x
 
 print=""
 no_rehash=""
@@ -61,44 +61,45 @@ if [ -z "$print" ]; then
     ;;
   esac
 
-  { echo "# load erlenv automatically by adding"
+  { echo "# Load rbenv automatically by adding"
     echo "# the following to ${profile}:"
     echo
-    echo 'eval "$(erlenv init -)"'
+    echo 'eval "$(rbenv init -)"'
     echo
   } >&2
 
   exit 1
 fi
 
-mkdir -p "${ERLENV_ROOT}/"{shims,releases}
+mkdir -p "${RBENV_ROOT}/"{shims,versions}
 
-echo 'export PATH="'${ERLENV_ROOT}'/shims:${PATH}"'
+echo 'export PATH="'${RBENV_ROOT}'/shims:${PATH}"'
 
 case "$shell" in
 bash | zsh )
-  echo "source \"$root/completions/erlenv.${shell}\""
+  echo "source \"$root/completions/rbenv.${shell}\""
   ;;
 esac
 
 if [ -z "$no_rehash" ]; then
-  echo 'erlenv rehash 2>/dev/null'
+  echo 'rbenv rehash 2>/dev/null'
 fi
 
-commands=(`erlenv commands --sh`)
+commands=(`rbenv-commands --sh`)
 IFS="|"
 cat <<EOS
-erlenv() {
-  local command="\$1"
+rbenv() {
+  typeset command
+  command="\$1"
   if [ "\$#" -gt 0 ]; then
     shift
   fi
 
   case "\$command" in
   ${commands[*]})
-    eval "\`erlenv "sh-\$command" "\$@"\`";;
+    eval "\`rbenv "sh-\$command" "\$@"\`";;
   *)
-    command erlenv "\$command" "\$@";;
+    command rbenv "\$command" "\$@";;
   esac
 }
 EOS

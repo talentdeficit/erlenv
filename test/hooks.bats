@@ -8,42 +8,42 @@ create_hook() {
 }
 
 @test "prints usage help given no argument" {
-  run erlenv-hooks
-  assert_failure "Usage: erlenv hooks <command>"
+  run rbenv-hooks
+  assert_failure "Usage: rbenv hooks <command>"
 }
 
 @test "prints list of hooks" {
-  path1="${ERLENV_TEST_DIR}/erlenv.d"
-  path2="${ERLENV_TEST_DIR}/etc/erlenv_hooks"
+  path1="${RBENV_TEST_DIR}/rbenv.d"
+  path2="${RBENV_TEST_DIR}/etc/rbenv_hooks"
   create_hook "$path1" exec "hello.bash"
   create_hook "$path1" exec "ahoy.bash"
   create_hook "$path1" exec "invalid.sh"
   create_hook "$path1" which "boom.bash"
   create_hook "$path2" exec "bueno.bash"
 
-  ERLENV_HOOK_PATH="$path1:$path2" run erlenv-hooks exec
+  RBENV_HOOK_PATH="$path1:$path2" run rbenv-hooks exec
   assert_success
-  assert_line 0 "${ERLENV_TEST_DIR}/erlenv.d/exec/ahoy.bash"
-  assert_line 1 "${ERLENV_TEST_DIR}/erlenv.d/exec/hello.bash"
-  assert_line 2 "${ERLENV_TEST_DIR}/etc/erlenv_hooks/exec/bueno.bash"
+  assert_line 0 "${RBENV_TEST_DIR}/rbenv.d/exec/ahoy.bash"
+  assert_line 1 "${RBENV_TEST_DIR}/rbenv.d/exec/hello.bash"
+  assert_line 2 "${RBENV_TEST_DIR}/etc/rbenv_hooks/exec/bueno.bash"
 }
 
 @test "resolves relative paths" {
-  path="${ERLENV_TEST_DIR}/erlenv.d"
+  path="${RBENV_TEST_DIR}/rbenv.d"
   create_hook "$path" exec "hello.bash"
   mkdir -p "$HOME"
 
-  ERLENV_HOOK_PATH="${HOME}/../erlenv.d" run erlenv-hooks exec
-  assert_success "${ERLENV_TEST_DIR}/erlenv.d/exec/hello.bash"
+  RBENV_HOOK_PATH="${HOME}/../rbenv.d" run rbenv-hooks exec
+  assert_success "${RBENV_TEST_DIR}/rbenv.d/exec/hello.bash"
 }
 
 @test "resolves symlinks" {
-  path="${ERLENV_TEST_DIR}/erlenv.d"
+  path="${RBENV_TEST_DIR}/rbenv.d"
   mkdir -p "${path}/exec"
   mkdir -p "$HOME"
   touch "${HOME}/hola.bash"
   ln -s "../../home/hola.bash" "${path}/exec/hello.bash"
 
-  ERLENV_HOOK_PATH="$path" run erlenv-hooks exec
+  RBENV_HOOK_PATH="$path" run rbenv-hooks exec
   assert_success "${HOME}/hola.bash"
 }
