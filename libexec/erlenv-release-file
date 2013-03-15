@@ -9,9 +9,6 @@ find_local_release_file() {
     if [ -e "${root}/.erlang-release" ]; then
       echo "${root}/.erlang-release"
       exit
-    elif [ -e "${root}/.erlenv-release" ]; then
-      echo "${root}/.erlenv-release"
-      exit
     fi
     root="${root%/*}"
   done

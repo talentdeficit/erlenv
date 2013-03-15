@@ -15,10 +15,6 @@
 # `ERLENV_RELEASE' environment variable takes precedence over local
 # and global releases.
 #
-# For backwards compatibility, erlenv will also read release
-# specifications from `.erlenv-release' files, but a `.erlang-release'
-# file in the same directory takes precedence.
-#
 # <release> should be a string matching a erlang release known to erlenv.
 # The special release string `system' will use your default system erlang.
 # Run `erlenv releases' for a list of available erlang releases.
@@ -36,18 +32,11 @@ fi
 ERLENV_RELEASE="$1"
 
 if [ "$ERLENV_RELEASE" = "--unset" ]; then
-  rm -f .erlang-release .erlenv-release
+  rm -f .erlang-release
 elif [ -n "$ERLENV_RELEASE" ]; then
-  if [ "$(ERLENV_RELEASE= erlenv-release-origin)" -ef .erlenv-release ]; then
-    rm -f .erlenv-release
-    { echo "erlenv: removed existing \`.erlenv-release' file and migrated"
-      echo "       local release specification to \`.erlang-release' file"
-    } >&2
-  fi
   erlenv-release-file-write .erlang-release "$ERLENV_RELEASE"
 else
   erlenv-release-file-read .erlang-release ||
-  erlenv-release-file-read .erlenv-release ||
   { echo "erlenv: no local release configured for this directory"
     exit 1
   } >&2
