@@ -8,6 +8,10 @@
 #   <release>-<num_commits>-<git_sha>
 # where `num_commits` is the number of commits since `version` was
 # tagged.
+#
+# Note that we mirror the version of rbenv and do not increment
+# unilaterally. Changes that would also change the behavior of
+# rbenv are avoided unless absolutely necessary
 
 set -e
 [ -n "$ERLENV_DEBUG" ] && set -x
