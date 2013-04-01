@@ -42,10 +42,9 @@ create_executable() {
   export ERLENV_RELEASE="R1B"
   create_executable "erl" "#!$BASH
     echo \$0
-    while [[ \$# -gt 0 ]]; do
+    for arg; do
       # hack to avoid bash builtin echo which can't output '-e'
-      printf \"%s\\n\" \"\$1\"
-      shift 1
+      printf \"%s\\n\" \"\$arg\"
     done"
 
   run erlenv-exec erl +K true +P 134217727 -- extra
