@@ -40,9 +40,9 @@ if [[ \$1 = --complete ]]; then
 else
   exit 1
 fi"
+
   run erlenv-completions hello happy world
-  assert_success
-  assert_line 0 "happy"
-  assert_line 1 "world"
-  refute_line 2
+  assert_success "\
+    happy
+    world"
 }

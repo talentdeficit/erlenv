@@ -22,10 +22,9 @@ create_executable() {
 
   erlenv-rehash
   run erlenv-completions exec
-  assert_success
-  assert_line 0 "erl"
-  assert_line 1 "rebar"
-  refute_line 2
+  assert_success "\
+    rake
+    ruby"
 }
 
 @test "supports hook path with spaces" {
@@ -45,18 +44,17 @@ create_executable() {
     echo \$0
     while [[ \$# -gt 0 ]]; do
       # hack to avoid bash builtin echo which can't output '-e'
-      cat <<<\"\$1\"
+      printf \"%s\\n\" \"\$1\"
       shift 1
-    done
-    "
+    done"
 
   run erlenv-exec erl +K true +P 134217727 -- extra
-  assert_line 0 "${ERLENV_ROOT}/releases/R1B/bin/erl"
-  assert_line 1 "+K"
-  assert_line 2 "true"
-  assert_line 3 "+P"
-  assert_line 4 "134217727"
-  assert_line 5 "--"
-  assert_line 6 "extra"
-  refute_line 7
+  assert_success "\
+    ${ERLENV_ROOT}/releases/R1B/bin/erl
+    +K
+    true
+    +P
+    134217727
+    --
+    extra"
 }
