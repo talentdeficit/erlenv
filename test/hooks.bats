@@ -28,6 +28,18 @@ create_hook() {
   assert_line 2 "${ERLENV_TEST_DIR}/etc/erlenv_hooks/exec/bueno.bash"
 }
 
+@test "supports hook paths with spaces" {
+  path1="${ERLENV_TEST_DIR}/my hooks/erlenv.d"
+  path2="${ERLENV_TEST_DIR}/etc/erlenv hooks"
+  create_hook "$path1" exec "hello.bash"
+  create_hook "$path2" exec "ahoy.bash"
+
+  ERLENV_HOOK_PATH="$path1:$path2" run erlenv-hooks exec
+  assert_success
+  assert_line 0 "${ERLENV_TEST_DIR}/my hooks/erlenv.d/exec/hello.bash"
+  assert_line 1 "${ERLENV_TEST_DIR}/etc/erlenv hooks/exec/ahoy.bash"
+}
+
 @test "resolves relative paths" {
   path="${ERLENV_TEST_DIR}/erlenv.d"
   create_hook "$path" exec "hello.bash"

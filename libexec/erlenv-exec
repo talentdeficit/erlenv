@@ -21,7 +21,7 @@ if [ "$1" = "--complete" ]; then
   exec erlenv shims --short
 fi
 
-export ERLENV_RELEASE="$(erlenv-release-name)"
+ERLENV_RELEASE="$(erlenv-release-name)"
 ERLENV_COMMAND="$1"
 
 if [ -z "$ERLENV_COMMAND" ]; then
@@ -29,10 +29,12 @@ if [ -z "$ERLENV_COMMAND" ]; then
   exit 1
 fi
 
+export ERLENV_RELEASE 
 ERLENV_COMMAND_PATH="$(erlenv-which "$ERLENV_COMMAND")"
 ERLENV_BIN_PATH="${ERLENV_COMMAND_PATH%/*}"
 
-for script in $(erlenv-hooks exec); do
+IFS=$'\n' scripts=(`erlenv-hooks exec`)
+for script in "${scripts[@]}"; do 
   source "$script"
 done
 

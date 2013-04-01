@@ -37,9 +37,12 @@ realpath() {
   cd "$cwd"
 }
 
+IFS=: hook_paths=($ERLENV_HOOK_PATH)
+
 shopt -s nullglob
-for path in ${ERLENV_HOOK_PATH//:/$'\n'}; do
-  for script in $path/"$ERLENV_COMMAND"/*.bash; do
+
+for path in "${hook_paths[@]}"; do
+  for script in "$path/$ERLENV_COMMAND"/*.bash; do
     echo $(realpath $script)
   done
 done

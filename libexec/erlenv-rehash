@@ -144,7 +144,8 @@ make_shims ../releases/*/bin/*
 cd "$OLDPWD"
 
 # Allow plugins to register shims.
-for script in $(erlenv-hooks rehash); do
+IFS=$'\n' scripts=(`erlenv-hooks rehash`)
+for script in "${scripts[@]}"; do
   source "$script"
 done
 
