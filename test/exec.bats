@@ -3,10 +3,15 @@
 load test_helper
 
 create_executable() {
+  name="${1?}"
+  shift 1
   bin="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}/bin"
   mkdir -p "$bin"
-  echo "$2" > "${bin}/$1"
-  chmod +x "${bin}/$1"
+  { if [ $# -eq 0 ]; then cat -
+    else echo "$@"
+    fi
+  } | sed -Ee '1s/^ +//' > "${bin}/$name"
+  chmod +x "${bin}/$name"
 }
 
 @test "fails with invalid version" {
@@ -17,14 +22,14 @@ create_executable() {
 
 @test "completes with names of executables" {
   export ERLENV_RELEASE="R1B"
-  create_executable "erl"
-  create_executable "rebar"
+  create_executable "erl" "#!/bin/sh"
+  create_executable "rebar" "#!/bin/sh"
 
   erlenv-rehash
   run erlenv-completions exec
   assert_success "\
-    rake
-    ruby"
+    erl
+    rebar"
 }
 
 @test "supports hook path with spaces" {
@@ -40,12 +45,14 @@ create_executable() {
 
 @test "forwards all arguments" {
   export ERLENV_RELEASE="R1B"
-  create_executable "erl" "#!$BASH
-    echo \$0
-    for arg; do
-      # hack to avoid bash builtin echo which can't output '-e'
-      printf \"%s\\n\" \"\$arg\"
-    done"
+  create_executable "erl" <<SH
+#!$BASH
+echo \$0
+for arg; do
+  # hack to avoid bash builtin echo which can't output '-e'
+  printf "%s\\n" "\$arg"
+done
+SH
 
   run erlenv-exec erl +K true +P 134217727 -- extra
   assert_success "\
