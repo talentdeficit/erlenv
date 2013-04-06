@@ -49,9 +49,12 @@ create_executable() {
   create_executable "r17a" "rebar"
 
   ERLENV_RELEASE=r15b run erlenv-which rebar
-  assert_failure "\
-    erlenv: rebar: command not found
-    The \`rebar' command exists in these erlang releases:
-      r16b
-      r17a"
+  assert_failure
+	assert_output <<OUT
+erlenv: rebar: command not found
+
+The \`rebar' command exists in these erlang releases:
+  r16b
+  r17a
+OUT
 }

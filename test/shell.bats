@@ -22,9 +22,11 @@ load test_helper
 
 @test "shell change invalid release" {
   run erlenv-sh-shell 1.2.3
-  assert_failure "\
-  erlenv: release \`1.2.3' not installed
-  return 1"
+  assert_failure
+	assert_output <<SH
+erlenv: release \`1.2.3' not installed
+return 1
+SH
 }
 
 @test "shell change release" {

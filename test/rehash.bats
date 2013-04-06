@@ -45,9 +45,11 @@ create_executable() {
   assert_success ""
 
   run ls "${ERLENV_ROOT}/shims"
-  assert_success "\
-    erl
-		erlc
-		typer"
+  assert_success
+	assert_output <<OUT
+erl
+erlc
+typer
+OUT
 }
 

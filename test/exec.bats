@@ -27,9 +27,11 @@ create_executable() {
 
   erlenv-rehash
   run erlenv-completions exec
-  assert_success "\
-    erl
-    rebar"
+  assert_success
+  assert_output <<OUT
+erl
+rebar
+OUT
 }
 
 @test "supports hook path with spaces" {
@@ -50,17 +52,20 @@ create_executable() {
 echo \$0
 for arg; do
   # hack to avoid bash builtin echo which can't output '-e'
-  printf "%s\\n" "\$arg"
+  printf "  %s\\n" "\$arg"
 done
 SH
 
   run erlenv-exec erl +K true +P 134217727 -- extra
-  assert_success "\
-    ${ERLENV_ROOT}/releases/R1B/bin/erl
-    +K
-    true
-    +P
-    134217727
-    --
-    extra"
+  assert_success
+	assert_output <<OUT
+${ERLENV_ROOT}/releases/R1B/bin/erl
+  +K
+  true
+  +P
+  134217727
+  --
+  extra
+OUT
 }
+

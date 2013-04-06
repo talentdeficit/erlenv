@@ -39,7 +39,9 @@ else
 fi"
 
   run erlenv-completions hello happy world
-  assert_success "\
-    happy
-    world"
+  assert_success
+  assert_output <<OUT
+happy
+world
+OUT
 }

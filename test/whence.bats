@@ -16,9 +16,11 @@ create_executable() {
   create_executable "r16b" "typer"
 
   run erlenv-whence erl
-  assert_success "\
-    r15b
-    r16b"
+  assert_success
+	assert_output <<OUT
+r15b
+r16b
+OUT
 
   run erlenv-whence erlc
   assert_success "r15b"
