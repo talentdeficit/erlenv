@@ -22,14 +22,13 @@ load test_helper
 
 @test "shell change invalid release" {
   run erlenv-sh-shell 1.2.3
-  assert_failure
-  assert_line "erlenv: release \`1.2.3' not installed"
-  assert_line "return 1"
+  assert_failure "\
+  erlenv: release \`1.2.3' not installed
+  return 1"
 }
 
 @test "shell change release" {
   mkdir -p "${ERLENV_ROOT}/releases/1.2.3"
   run erlenv-sh-shell 1.2.3
   assert_success 'export ERLENV_RELEASE="1.2.3"'
-  refute_line "return 1"
 }
