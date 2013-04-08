@@ -21,6 +21,7 @@ setup() {
 
 @test "ignores release in parent directory" {
   echo "1.2.3" > .erlang-release
+
   mkdir -p "subdir" && cd "subdir"
   run erlenv-local
   assert_failure
@@ -48,6 +49,12 @@ setup() {
   assert_success "1.0-pre"
   run erlenv-local 1.2.3
   assert_success ""
-  run erlenv-local
-  assert_success "1.2.3"
+  assert [ "$(cat .erlang-release)" = "1.2.3" ]
+}
+
+@test "unsets local release" {
+  touch .erlang-release
+  run erlenv-local --unset
+  assert_success ""
+  assert [ ! -e .erlang-release ]
 }
