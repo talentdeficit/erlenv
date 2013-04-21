@@ -6,6 +6,11 @@ create_release() {
   mkdir -p "${ERLENV_ROOT}/releases/$1"
 }
 
+setup() {
+  mkdir -p "$ERLENV_TEST_DIR"
+  cd "$ERLENV_TEST_DIR"
+}
+
 @test "no releases installed" {
   assert [ ! -d "${ERLENV_ROOT}/releases" ]
   run erlenv-releases
@@ -88,8 +93,6 @@ OUT
 @test "per-project release" {
   create_release "r15b"
   create_release "r16b"
-  mkdir -p "$ERLENV_TEST_DIR"
-  cd "$ERLENV_TEST_DIR"
   cat > ".erlang-release" <<<"r15b"
   run erlenv-releases
   assert_success
