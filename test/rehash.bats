@@ -53,3 +53,16 @@ typer
 OUT
 }
 
+@test "carries original IFS within hooks" {
+  hook_path="${ERLENV_TEST_DIR}/erlenv.d"
+  mkdir -p "${hook_path}/rehash"
+  cat > "${hook_path}/rehash/hello.bash" <<SH
+hellos=(\$(printf "hello\\tugly world\\nagain"))
+echo HELLO="\$(printf ":%s" "\${hellos[@]}")"
+exit
+SH
+
+  ERLENV_HOOK_PATH="$hook_path" IFS=$' \t\n' run erlenv-rehash
+  assert_success
+  assert_output "HELLO=:hello:ugly:world:again"
+}

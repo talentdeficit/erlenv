@@ -45,6 +45,20 @@ OUT
   assert_line "HELLO=from hook"
 }
 
+@test "carries original IFS within hooks" {
+  hook_path="${ERLENV_TEST_DIR}/erlenv.d"
+  mkdir -p "${hook_path}/exec"
+  cat > "${hook_path}/exec/hello.bash" <<SH
+hellos=(\$(printf "hello\\tugly world\\nagain"))
+echo HELLO="\$(printf ":%s" "\${hellos[@]}")"
+SH
+
+  export ERLENV_VERSION=system
+  ERLENV_HOOK_PATH="$hook_path" IFS=$' \t\n' run erlenv-exec env
+  assert_success
+  assert_line "HELLO=:hello:ugly:world:again"
+}
+
 @test "forwards all arguments" {
   export ERLENV_RELEASE="R1B"
   create_executable "erl" <<SH

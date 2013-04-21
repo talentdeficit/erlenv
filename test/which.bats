@@ -58,3 +58,17 @@ The \`rebar' command exists in these erlang releases:
   r17a
 OUT
 }
+
+@test "carries original IFS within hooks" {
+  hook_path="${ERLENV_TEST_DIR}/erlenv.d"
+  mkdir -p "${hook_path}/which"
+  cat > "${hook_path}/which/hello.bash" <<SH
+hellos=(\$(printf "hello\\tugly world\\nagain"))
+echo HELLO="\$(printf ":%s" "\${hellos[@]}")"
+exit
+SH
+
+  ERLENV_HOOK_PATH="$hook_path" IFS=$' \t\n' run erlenv-which anything
+  assert_success
+  assert_output "HELLO=:hello:ugly:world:again"
+}
