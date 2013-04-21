@@ -28,6 +28,7 @@ SH
   assert_success
   assert_output <<SH
 Usage: erlenv hello <world>
+
 This command is useful for saying hello.
 SH
 }
@@ -82,6 +83,7 @@ SH
 Usage: erlenv hello <world>
        erlenv hi [everybody]
        erlenv hola --translate
+
 Help text.
 SH
 }
