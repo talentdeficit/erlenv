@@ -63,7 +63,9 @@ else
   ERLENV_COMMAND_PATH="${ERLENV_ROOT}/releases/${ERLENV_RELEASE}/bin/${ERLENV_COMMAND}"
 fi
 
+OLDIFS="$IFS"
 IFS=$'\n' scripts=(`erlenv-hooks which`)
+IFS="$OLDIFS"
 for script in "${scripts[@]}"; do 
   source "$script"
 done

@@ -33,7 +33,9 @@ export ERLENV_RELEASE
 ERLENV_COMMAND_PATH="$(erlenv-which "$ERLENV_COMMAND")"
 ERLENV_BIN_PATH="${ERLENV_COMMAND_PATH%/*}"
 
+OLDIFS="$IFS"
 IFS=$'\n' scripts=(`erlenv-hooks exec`)
+IFS="$OLDIFS"
 for script in "${scripts[@]}"; do 
   source "$script"
 done
