@@ -146,7 +146,7 @@ if [ -z "$1" ] || [ "$1" == "erlenv" ]; then
   print_summaries commands local global shell install uninstall rehash release releases which whence
   echo
   echo "See \`erlenv help <command>' for information on a specific command."
-  echo "For full documentation, see: https://github.com/sstephenson/erlenv#readme"
+  echo "For full documentation, see: https://github.com/talentdeficit/erlenv#readme"
 else
   command="$1"
   if [ -n "$(command_path "$command")" ]; then
