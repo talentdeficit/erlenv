@@ -108,13 +108,14 @@ reading it from the following sources, in this order:
    the [`rbenv shell`](#rbenv-shell) command to set this environment
    variable in your current shell session.
 
-2. The application-specific `.ruby-version` file in the current
-   directory, if present. You can modify the current directory's
-   `.ruby-version` file with the [`rbenv local`](#rbenv-local)
-   command.
+2. The first `.ruby-version` file found by searching the directory of the
+   script you are executing and each of its parent directories until reaching
+   the root of your filesystem.
 
-3. The first `.ruby-version` file found by searching each parent
-   directory until reaching the root of your filesystem, if any.
+3. The first `.ruby-version` file found by searching the current working
+   directory and each of its parent directories until reaching the root of your
+   filesystem. You can modify the `.ruby-version` file in the current working
+   directory with the [`rbenv local`](#rbenv-local) command.
 
 4. The global `~/.rbenv/version` file. You can modify this file using
    the [`rbenv global`](#rbenv-global) command. If the global version
@@ -190,7 +191,7 @@ easy to fork and contribute any changes back upstream.
    process of installing new Ruby versions.
 
     ~~~
-    $ rbenv install 1.9.3-p327
+    $ rbenv install 2.0.0-p247
     ~~~
 
    As an alternative, you can download and compile Ruby yourself into
@@ -225,7 +226,7 @@ $ git checkout v0.3.0
 ### Homebrew on Mac OS X
 
 You can also install rbenv using the
-[Homebrew](http://mxcl.github.com/homebrew/) package manager on Mac OS
+[Homebrew](http://brew.sh) package manager on Mac OS
 X.
 
 ~~~
