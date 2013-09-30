@@ -21,7 +21,7 @@ load test_helper
   root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
   SHELL=/bin/bash run erlenv-init -
   assert_success
-  assert_line 'source "'${root}'/libexec/../completions/erlenv.bash"'
+  assert_line ". '${root}/libexec/../completions/erlenv.bash'"
 }
 
 @test "setup shell completions (fish)" {
@@ -46,9 +46,9 @@ load test_helper
 
 @test "adds shims to PATH (fish)" {
   export PATH="${BATS_TEST_DIRNAME}/../libexec:/usr/bin:/bin"
-  SHELL=/usr/bin/fish run rbenv-init -
+  SHELL=/usr/bin/fish run erlenv-init -
   assert_success
-  assert_line 0 "setenv PATH '${RBENV_ROOT}/shims' \$PATH"
+  assert_line 0 "setenv PATH '${ERLENV_ROOT}/shims' \$PATH"
 }
 
 @test "doesn't add shims to PATH more than once" {
@@ -59,8 +59,8 @@ load test_helper
 }
 
 @test "doesn't add shims to PATH more than once (fish)" {
-  export PATH="${RBENV_ROOT}/shims:$PATH"
-  SHELL=/usr/bin/fish run rbenv-init -
+  export PATH="${ERLENV_ROOT}/shims:$PATH"
+  SHELL=/usr/bin/fish run erlenv-init -
   assert_success
-  refute_line 'setenv PATH "'${RBENV_ROOT}'/shims" $PATH ;'
+  refute_line 'setenv PATH "'${ERLENV_ROOT}'/shims" $PATH ;'
 }

@@ -46,7 +46,7 @@ create_executable() {
 
   run ls "${ERLENV_ROOT}/shims"
   assert_success
-	assert_output <<OUT
+  assert_output <<OUT
 erl
 erlc
 typer
@@ -54,34 +54,34 @@ OUT
 }
 
 @test "removes stale shims" {
-  mkdir -p "${RBENV_ROOT}/shims"
-  touch "${RBENV_ROOT}/shims/oldshim1"
-  chmod +x "${RBENV_ROOT}/shims/oldshim1"
+  mkdir -p "${ERLENV_ROOT}/shims"
+  touch "${ERLENV_ROOT}/shims/oldshim1"
+  chmod +x "${ERLENV_ROOT}/shims/oldshim1"
 
-  create_executable "2.0" "rake"
-  create_executable "2.0" "ruby"
+  create_executable "r16b" "erl"
+  create_executable "r16b" "erlc"
 
-  run rbenv-rehash
+  run erlenv-rehash
   assert_success ""
 
-  assert [ ! -e "${RBENV_ROOT}/shims/oldshim1" ]
+  assert [ ! -e "${ERLENV_ROOT}/shims/oldshim1" ]
 }
 
 @test "binary install locations containing spaces" {
-  create_executable "dirname1 p247" "ruby"
-  create_executable "dirname2 preview1" "rspec"
+  create_executable "dirname1 r16a" "erl"
+  create_executable "dirname2 r16b" "erlc"
 
-  assert [ ! -e "${RBENV_ROOT}/shims/ruby" ]
-  assert [ ! -e "${RBENV_ROOT}/shims/rspec" ]
+  assert [ ! -e "${ERLENV_ROOT}/shims/erl" ]
+  assert [ ! -e "${ERLENV_ROOT}/shims/erlc" ]
 
-  run rbenv-rehash
+  run erlenv-rehash
   assert_success ""
 
-  run ls "${RBENV_ROOT}/shims"
+  run ls "${ERLENV_ROOT}/shims"
   assert_success
   assert_output <<OUT
-rspec
-ruby
+erl
+erlc
 OUT
 }
 
@@ -100,15 +100,15 @@ SH
 }
 
 @test "sh-rehash in bash" {
-  create_executable "2.0" "ruby"
-  SHELL=/bin/bash run rbenv-sh-rehash
+  create_executable "r16b" "erl"
+  SHELL=/bin/bash run erlenv-sh-rehash
   assert_success "hash -r 2>/dev/null || true"
-  assert [ -x "${RBENV_ROOT}/shims/ruby" ]
+  assert [ -x "${ERLENV_ROOT}/shims/erl" ]
 }
 
 @test "sh-rehash in fish" {
-  create_executable "2.0" "ruby"
-  SHELL=/usr/bin/fish run rbenv-sh-rehash
+  create_executable "r16b" "erl"
+  SHELL=/usr/bin/fish run erlenv-sh-rehash
   assert_success "hash -r 2>/dev/null ; or true"
-  assert [ -x "${RBENV_ROOT}/shims/ruby" ]
+  assert [ -x "${ERLENV_ROOT}/shims/erl" ]
 }

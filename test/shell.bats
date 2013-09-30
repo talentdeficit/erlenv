@@ -43,6 +43,7 @@ SH
   mkdir -p "${ERLENV_ROOT}/releases/1.2.3"
   SHELL=/bin/bash run erlenv-sh-shell 1.2.3
   assert_success 'export ERLENV_RELEASE="1.2.3"'
+}
 
 @test "shell change version (fish)" {
   mkdir -p "${ERLENV_ROOT}/releases/1.2.3"
