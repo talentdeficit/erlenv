@@ -2,15 +2,15 @@
 #
 # Summary: Set or show the shell-specific erlang release
 #
-# Usage: erlenv shell <version>
+# Usage: erlenv shell <release>
 #        erlenv shell --unset
 #
 # Sets a shell-specific erlang release by setting the `ERLENV_RELEASE'
-# environment variable in your shell. This version overrides local
-# application-specific versions and the global version.
+# environment variable in your shell. This release overrides local
+# application-specific releases and the global release.
 #
 # <release> should be a string matching a erlang release known to erlenv.
-# The special version string `system' will use your default system erlang.
+# The special release string `system' will use your default system erlang.
 # Run `erlenv releases' for a list of available erlang releases.
 
 set -e
@@ -20,7 +20,7 @@ set -e
 if [ "$1" = "--complete" ]; then
   echo --unset
   echo system
-  exec erlenv-versions --bare
+  exec erlenv-releases --bare
 fi
 
 release="$1"
