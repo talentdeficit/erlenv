@@ -1,49 +1,64 @@
 #!/usr/bin/env bash
 #
-# Summary: Set or show the shell-specific erlang release
+# Summary: Set or show the shell-specific Ruby version
 #
-# Usage: erlenv shell <release>
-#        erlenv shell --unset
+# Usage: rbenv shell <version>
+#        rbenv shell --unset
 #
-# Sets a shell-specific erlang release by setting the `ERLENV_RELEASE'
-# environment variable in your shell. This release overrides local
-# application-specific releases and the global release.
+# Sets a shell-specific Ruby version by setting the `RBENV_VERSION'
+# environment variable in your shell. This version overrides local
+# application-specific versions and the global version.
 #
-# <release> should be a string matching a erlang release known to erlenv.
-# The special release string `system' will use your default system erlang.
-# Run `erlenv releases' for a list of available erlang releases.
+# <version> should be a string matching a Ruby version known to rbenv.
+# The special version string `system' will use your default system Ruby.
+# Run `rbenv versions' for a list of available Ruby versions.
 
 set -e
-[ -n "$ERLENV_DEBUG" ] && set -x
+[ -n "$RBENV_DEBUG" ] && set -x
 
-# Provide erlenv completions
+# Provide rbenv completions
 if [ "$1" = "--complete" ]; then
   echo --unset
   echo system
-  exec erlenv-releases --bare
+  exec rbenv-versions --bare
 fi
 
-release="$1"
+version="$1"
+shell="$(basename "$SHELL")"
 
-if [ -z "$release" ]; then
-  if [ -z "$ERLENV_RELEASE" ]; then
-    echo "erlenv: no shell-specific release configured" >&2
+if [ -z "$version" ]; then
+  if [ -z "$RBENV_VERSION" ]; then
+    echo "rbenv: no shell-specific version configured" >&2
     exit 1
   else
-    echo "echo \"\$ERLENV_RELEASE\""
+    echo "echo \"\$RBENV_VERSION\""
     exit
   fi
 fi
 
-if [ "$release" = "--unset" ]; then
-  echo "unset ERLENV_RELEASE"
+if [ "$version" = "--unset" ]; then
+  case "$shell" in
+  fish )
+    echo "set -e RBENV_VERSION"
+    ;;
+  * )
+    echo "unset RBENV_VERSION"
+    ;;
+  esac
   exit
 fi
 
-# Make sure the specified release is installed.
-if erlenv-prefix "$release" >/dev/null; then
-  echo "export ERLENV_RELEASE=\"${release}\""
+# Make sure the specified version is installed.
+if rbenv-prefix "$version" >/dev/null; then
+  case "$shell" in
+  fish )
+    echo "setenv RBENV_VERSION \"${version}\""
+    ;;
+  * )
+    echo "export RBENV_VERSION=\"${version}\""
+    ;;
+  esac
 else
-  echo "return 1"
+  echo "false"
   exit 1
 fi
