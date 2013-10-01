@@ -1,14 +1,20 @@
-ERLENV_TEST_DIR="${BATS_TMPDIR}/erlenv"
-export ERLENV_ROOT="${ERLENV_TEST_DIR}/root"
-export HOME="${ERLENV_TEST_DIR}/home"
-
 unset ERLENV_RELEASE
 unset ERLENV_DIR
 
-export PATH="${ERLENV_TEST_DIR}/bin:$PATH"
-export PATH="${BATS_TEST_DIRNAME}/../libexec:$PATH"
-export PATH="${BATS_TEST_DIRNAME}/libexec:$PATH"
-export PATH="${ERLENV_ROOT}/shims:$PATH"
+ERLENV_TEST_DIR="${BATS_TMPDIR}/erlenv"
+
+# guard against executing this block twice due to bats internals
+if [ "$ERLENV_ROOT" != "${ERLENV_TEST_DIR}/root" ]; then
+  export ERLENV_ROOT="${ERLENV_TEST_DIR}/root"
+  export HOME="${ERLENV_TEST_DIR}/home"
+
+  PATH=/usr/bin:/bin:/usr/sbin:/sbin
+  PATH="${ERLENV_TEST_DIR}/bin:$PATH"
+  PATH="${BATS_TEST_DIRNAME}/../libexec:$PATH"
+  PATH="${BATS_TEST_DIRNAME}/libexec:$PATH"
+  PATH="${ERLENV_ROOT}/shims:$PATH"
+  export PATH
+fi
 
 teardown() {
   rm -rf "$ERLENV_TEST_DIR"
@@ -18,7 +24,7 @@ flunk() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "$@"
     fi
-  } | sed "s:${ERLENV_TEST_DIR}:TEST_DIR:" >&2
+  } | sed "s:${ERLENV_TEST_DIR}:TEST_DIR:g" >&2
   return 1
 }
 

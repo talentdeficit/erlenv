@@ -24,6 +24,7 @@ if [ "$1" = "--complete" ]; then
 fi
 
 release="$1"
+shell="$(basename "$SHELL")"
 
 if [ -z "$release" ]; then
   if [ -z "$ERLENV_RELEASE" ]; then
@@ -36,14 +37,28 @@ if [ -z "$release" ]; then
 fi
 
 if [ "$release" = "--unset" ]; then
-  echo "unset ERLENV_RELEASE"
+  case "$shell" in
+  fish )
+    echo "set -e ERLENV_RELEASE"
+    ;;
+  * )
+    echo "unset ERLENV_RELEASE"
+    ;;
+  esac
   exit
 fi
 
 # Make sure the specified release is installed.
 if erlenv-prefix "$release" >/dev/null; then
-  echo "export ERLENV_RELEASE=\"${release}\""
+  case "$shell" in
+  fish )
+    echo "setenv ERLENV_RELEASE \"${release}\""
+    ;;
+  * )
+    echo "export ERLENV_RELEASE=\"${release}\""
+    ;;
+  esac
 else
-  echo "return 1"
+  echo "false"
   exit 1
 fi

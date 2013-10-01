@@ -18,11 +18,17 @@ load test_helper
 }
 
 @test "setup shell completions" {
-  export SHELL=/bin/bash
   root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
-  run erlenv-init -
+  SHELL=/bin/bash run erlenv-init -
   assert_success
-  assert_line 'source "'${root}'/libexec/../completions/erlenv.bash"'
+  assert_line ". '${root}/libexec/../completions/erlenv.bash'"
+}
+
+@test "setup shell completions (fish)" {
+  root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
+  SHELL=/usr/bin/fish run erlenv-init -
+  assert_success
+  assert_line ". '${root}/libexec/../completions/erlenv.fish'"
 }
 
 @test "option to skip rehash" {
@@ -33,14 +39,28 @@ load test_helper
 
 @test "adds shims to PATH" {
   export PATH="${BATS_TEST_DIRNAME}/../libexec:/usr/bin:/bin"
-  run erlenv-init -
+  SHELL=/bin/bash run erlenv-init -
   assert_success
   assert_line 0 'export PATH="'${ERLENV_ROOT}'/shims:${PATH}"'
 }
 
+@test "adds shims to PATH (fish)" {
+  export PATH="${BATS_TEST_DIRNAME}/../libexec:/usr/bin:/bin"
+  SHELL=/usr/bin/fish run erlenv-init -
+  assert_success
+  assert_line 0 "setenv PATH '${ERLENV_ROOT}/shims' \$PATH"
+}
+
 @test "doesn't add shims to PATH more than once" {
   export PATH="${ERLENV_ROOT}/shims:$PATH"
-  run erlenv-init -
+  SHELL=/bin/bash run erlenv-init -
   assert_success
   refute_line 'export PATH="'${ERLENV_ROOT}'/shims:${PATH}"'
+}
+
+@test "doesn't add shims to PATH more than once (fish)" {
+  export PATH="${ERLENV_ROOT}/shims:$PATH"
+  SHELL=/usr/bin/fish run erlenv-init -
+  assert_success
+  refute_line 'setenv PATH "'${ERLENV_ROOT}'/shims" $PATH ;'
 }

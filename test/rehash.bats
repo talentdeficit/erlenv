@@ -46,10 +46,42 @@ create_executable() {
 
   run ls "${ERLENV_ROOT}/shims"
   assert_success
-	assert_output <<OUT
+  assert_output <<OUT
 erl
 erlc
 typer
+OUT
+}
+
+@test "removes stale shims" {
+  mkdir -p "${ERLENV_ROOT}/shims"
+  touch "${ERLENV_ROOT}/shims/oldshim1"
+  chmod +x "${ERLENV_ROOT}/shims/oldshim1"
+
+  create_executable "r16b" "erl"
+  create_executable "r16b" "erlc"
+
+  run erlenv-rehash
+  assert_success ""
+
+  assert [ ! -e "${ERLENV_ROOT}/shims/oldshim1" ]
+}
+
+@test "binary install locations containing spaces" {
+  create_executable "dirname1 r16a" "erl"
+  create_executable "dirname2 r16b" "erlc"
+
+  assert [ ! -e "${ERLENV_ROOT}/shims/erl" ]
+  assert [ ! -e "${ERLENV_ROOT}/shims/erlc" ]
+
+  run erlenv-rehash
+  assert_success ""
+
+  run ls "${ERLENV_ROOT}/shims"
+  assert_success
+  assert_output <<OUT
+erl
+erlc
 OUT
 }
 
@@ -65,4 +97,18 @@ SH
   ERLENV_HOOK_PATH="$hook_path" IFS=$' \t\n' run erlenv-rehash
   assert_success
   assert_output "HELLO=:hello:ugly:world:again"
+}
+
+@test "sh-rehash in bash" {
+  create_executable "r16b" "erl"
+  SHELL=/bin/bash run erlenv-sh-rehash
+  assert_success "hash -r 2>/dev/null || true"
+  assert [ -x "${ERLENV_ROOT}/shims/erl" ]
+}
+
+@test "sh-rehash in fish" {
+  create_executable "r16b" "erl"
+  SHELL=/usr/bin/fish run erlenv-sh-rehash
+  assert_success "hash -r 2>/dev/null ; or true"
+  assert [ -x "${ERLENV_ROOT}/shims/erl" ]
 }
