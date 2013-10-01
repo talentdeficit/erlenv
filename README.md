@@ -51,7 +51,7 @@ check out erlenv into `~/.erlenv`:
 
 ```bash
 $ cd
-$ git clone git://github.com/talentdeficit/erlenv.git .erlenv
+$ git clone https://github.com/talentdeficit/erlenv.git .erlenv
 ```
 
 add `~/.erlenv/bin` to your `$PATH` for access to the `erlenv` command-line
