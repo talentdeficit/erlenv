@@ -87,7 +87,7 @@ $ make
 $ make install
 ```
 
-rebuild the shim binaries. you should do this any time you install a new release
+    **Ubuntu Desktop note**: Modify your `~/.bashrc` instead of `~/.bash_profile`.
 
 ```bash
 $ erlenv rehash
