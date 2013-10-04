@@ -21,7 +21,7 @@ load test_helper
   root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
   SHELL=/bin/bash run erlenv-init -
   assert_success
-  assert_line "source '${root}/libexec/../completions/rbenv.bash'"
+  assert_line "source '${root}/libexec/../completions/erlenv.bash'"
 }
 
 @test "setup shell completions (fish)" {
