@@ -179,7 +179,7 @@ lists all releases known to erlenv, and shows an asterisk next to the currently 
 release
 
 ```bash
-$ erlenv versions
+$ erlenv releases
   r14b04
   r14b04-minimal
   r15b01
