@@ -48,7 +48,7 @@ load test_helper
   export PATH="${BATS_TEST_DIRNAME}/../libexec:/usr/bin:/bin"
   SHELL=/usr/bin/fish run erlenv-init -
   assert_success
-  assert_line 0 "setenv PATH '${ERLENV_ROOT}/shims' \$PATH"
+  assert_line 0 "set -gx PATH '${ERLENV_ROOT}/shims' \$PATH"
 }
 
 @test "doesn't add shims to PATH more than once" {
