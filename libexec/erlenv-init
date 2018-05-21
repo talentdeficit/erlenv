@@ -92,7 +92,7 @@ mkdir -p "${ERLENV_ROOT}/"{shims,releases}
 if [[ ":${PATH}:" != *:"${ERLENV_ROOT}/shims":* ]]; then
   case "$shell" in
   fish )
-    echo "setenv PATH '${ERLENV_ROOT}/shims' \$PATH"
+    echo "set -gx PATH '${ERLENV_ROOT}/shims' \$PATH"
   ;;
   * )
     echo 'export PATH="'${ERLENV_ROOT}'/shims:${PATH}"'
