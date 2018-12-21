@@ -100,8 +100,6 @@ $ make
 $ make install
 ```
 
-    **Ubuntu Desktop note**: Modify your `~/.bashrc` instead of `~/.bash_profile`.
-
 ```bash
 $ erlenv rehash
 ```
