@@ -47,15 +47,15 @@ in your `$PATH`
 ## quickstart ##
 
 
-check out erlenv into `~/.erlenv`:
+1. Check out erlenv into `~/.erlenv`.
 
 ```bash
 $ cd
 $ git clone https://github.com/talentdeficit/erlenv.git .erlenv
 ```
 
-add `~/.erlenv/bin` to your `$PATH` for access to the `erlenv` command-line
-utility
+2. Add `~/.erlenv/bin` to your `$PATH` for access to the `erlenv` command-line
+utility.
 
 **For bash**
 
@@ -75,10 +75,9 @@ $ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.zshenv
 $ echo 'set PATH ~/.erlenv/bin $PATH' >> ~/.config/fish/config.fish
 ```
 
-run `~/.erlenv/bin/erlenv init` for shell-specific instructions on how to initialize erlenv to enable shims and autocompletion.
+3. Run `~/.erlenv/bin/erlenv init` for shell-specific instructions on how to initialize erlenv to enable shims and autocompletion.
 
-restart your shell so the path changes take effect. you can now begin using
-erlenv
+4. Restart your shell so the path changes take effect. you can now begin using erlenv.
 
 **For bash and zsh**
 
@@ -92,7 +91,7 @@ $ exec $SHELL
 $ eval $SHELL
 ```
 
-install releases into `~/.erlenv/releases`. for example, to install OTP R15B01,
+5. Install releases into `~/.erlenv/releases`. for example, to install OTP R15B01,
 download and unpack the source, then run:
 
 ```bash
@@ -107,7 +106,7 @@ $ make install
 $ erlenv rehash
 ```
 
-start using `erlenv`
+6. Start using `erlenv`.
 
 ```bash
 $ erlenv
