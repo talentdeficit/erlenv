@@ -57,11 +57,17 @@ $ git clone https://github.com/talentdeficit/erlenv.git .erlenv
 add `~/.erlenv/bin` to your `$PATH` for access to the `erlenv` command-line
 utility
 
+**For bash**
+
 ```bash
 $ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.bash_profile
 ```
 
-**zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
+**For zsh**
+
+```zsh
+$ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.zshenv
+```
 
 **For fish shell**
 
@@ -71,11 +77,17 @@ $ echo 'set PATH ~/.erlenv/bin $PATH' >> ~/.config/fish/config.fish
 
 add erlenv init to your shell to enable shims and autocompletion
 
+**For bash**
+
 ```bash
 $ echo 'eval "$(erlenv init -)"' >> ~/.bash_profile
 ```
 
-**zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
+**For zsh**
+
+```zsh
+$ echo 'eval "$(erlenv init -)"' >> ~/.zshenv
+```
 
 **For fish shell**
 
@@ -85,6 +97,8 @@ $ echo '. (erlenv init -|psub)' >> ~/.config/fish/config.fish
 
 restart your shell so the path changes take effect. you can now begin using
 erlenv
+
+**For bash and zsh**
 
 ```bash
 $ exec $SHELL
