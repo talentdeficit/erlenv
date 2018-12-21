@@ -75,25 +75,7 @@ $ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.zshenv
 $ echo 'set PATH ~/.erlenv/bin $PATH' >> ~/.config/fish/config.fish
 ```
 
-add erlenv init to your shell to enable shims and autocompletion
-
-**For bash**
-
-```bash
-$ echo 'eval "$(erlenv init -)"' >> ~/.bash_profile
-```
-
-**For zsh**
-
-```zsh
-$ echo 'eval "$(erlenv init -)"' >> ~/.zshenv
-```
-
-**For fish shell**
-
-```fish
-$ echo '. (erlenv init -|psub)' >> ~/.config/fish/config.fish
-```
+run `~/.erlenv/bin/erlenv init` for shell-specific instructions on how to initialize erlenv to enable shims and autocompletion.
 
 restart your shell so the path changes take effect. you can now begin using
 erlenv
