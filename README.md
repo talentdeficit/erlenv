@@ -63,6 +63,12 @@ $ echo 'export PATH="$HOME/.erlenv/bin:$PATH"' >> ~/.bash_profile
 
 **zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
 
+**For fish shell**
+
+```fish
+$ echo 'set PATH ~/.erlenv/bin $PATH' >> ~/.config/fish/config.fish
+```
+
 add erlenv init to your shell to enable shims and autocompletion
 
 ```bash
@@ -71,11 +77,23 @@ $ echo 'eval "$(erlenv init -)"' >> ~/.bash_profile
 
 **zsh note**: modify your `~/.zshenv` file instead of `~/.bash_profile`
 
+**For fish shell**
+
+```fish
+$ echo '. (erlenv init -|psub)' >> ~/.config/fish/config.fish
+```
+
 restart your shell so the path changes take effect. you can now begin using
 erlenv
 
 ```bash
 $ exec $SHELL
+```
+
+**For fish shell**
+
+```fish
+$ eval $SHELL
 ```
 
 install releases into `~/.erlenv/releases`. for example, to install OTP R15B01,
